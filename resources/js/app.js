@@ -1,1 +1,7 @@
-require('./bootstrap');
+// require("./bootstrap");
+
+import testModule from "./test.mjs";
+
+testModule();
+
+console.log("test");
