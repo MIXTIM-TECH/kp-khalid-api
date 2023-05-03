@@ -1,3 +1,9 @@
+@import url("./home.css");
+
 html {
     scroll-behavior: smooth;
+}
+
+body {
+    background-color: red;
 }

@@ -1,5 +1,3 @@
-// require("./bootstrap");
-
 import testModule from "./test.mjs";
 
 testModule();
