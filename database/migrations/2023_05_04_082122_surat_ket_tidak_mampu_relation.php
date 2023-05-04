@@ -13,11 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        // Schema::create('password_resets', function (Blueprint $table) {
-        //     $table->string('email')->index();
-        //     $table->string('token');
-        //     $table->timestamp('created_at')->nullable();
-        // });
+        Schema::table("surat_ket_tidak_mampu", function (Blueprint $table) {
+            $table->foreignId("pemohon")->constrained("anggota_keluarga");
+        });
     }
 
     /**
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down()
     {
-        // Schema::dropIfExists('password_resets');
+        //
     }
 };

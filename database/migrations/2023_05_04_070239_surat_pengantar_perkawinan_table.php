@@ -13,7 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        //
+        Schema::create("surat_pengantar_perkawinan", function (Blueprint $table) {
+            $table->id();
+        });
     }
 
     /**
@@ -23,6 +25,6 @@ return new class extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists("surat_pengantar_perkawinan");
     }
 };

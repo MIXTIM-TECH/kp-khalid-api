@@ -13,7 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        //
+        Schema::create("surat_ket_tidak_mampu", function (Blueprint $table) {
+            $table->id();
+            $table->string("surat_pengantar");
+        });
     }
 
     /**
@@ -23,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists("surat_ket_tidak_mampu");
     }
 };

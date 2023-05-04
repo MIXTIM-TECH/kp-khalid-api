@@ -13,7 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        //
+        Schema::table("surat_pengantar_perkawinan", function (Blueprint $table) {
+            $table->foreignId("pemohon")->constrained("anggota_keluarga");
+        });
     }
 
     /**

@@ -13,11 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create("credentials", function (Blueprint $table) {
-            $table->string("username");
-            $table->string("password");
-            $table->enum("role", ["super_admin", "admin", "user"]);
-            $table->enum("status", ["aktif", "tidak_aktif"]);
+        Schema::table("kk", function (Blueprint $table) {
+            $table->foreignId("id_kepala_keluarga")->constrained("anggota_keluarga");
         });
     }
 
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("credentials");
+        // 
     }
 };

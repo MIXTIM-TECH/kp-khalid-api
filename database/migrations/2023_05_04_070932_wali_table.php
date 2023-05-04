@@ -13,11 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create("credentials", function (Blueprint $table) {
-            $table->string("username");
-            $table->string("password");
-            $table->enum("role", ["super_admin", "admin", "user"]);
-            $table->enum("status", ["aktif", "tidak_aktif"]);
+        Schema::create("wali", function (Blueprint $table) {
+            $table->id();
+            $table->string("nama_wali");
+            $table->enum("jenis_kelamin", ["P", "L"]);
+            $table->string("tempat_lahir");
+            $table->string("tanggal_lahir");
+            $table->string("pekerjaan");
+            $table->string("status_perkawinan");
         });
     }
 
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("credentials");
+        Schema::dropIfExists("wali");
     }
 };
