@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table("credentials", function (Blueprint $table) {
-            $table->string("username", 16);
-            $table->foreign("username")->references("nik")->on("anggota_keluarga");
+            $table->string("username", 16)->unique();
+            $table->foreign("username")->references("nik_kepala_keluarga")->on("kk");
             $table->primary("username");
         });
     }

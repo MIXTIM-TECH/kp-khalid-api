@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AnggotaKeluarga;
 use App\Models\Credential;
 use App\Models\KK;
-use App\Models\User;
+use App\Models\Penduduk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -13,6 +13,13 @@ use Illuminate\Validation\Rules\File;
 
 class AuthController extends Controller
 {
+    private $rules;
+
+    public function __construct()
+    {
+        $this->rules = require_once(app_path("Http/Req/ValidationRules.php"));
+    }
+
     public function login(Request $request)
     {
         // 
@@ -22,14 +29,17 @@ class AuthController extends Controller
     {
         $validationResult = $this->checkValidator(Validator::make($request->all(), [
             "password"      => "string|required|min:8",
-            "no_kk"         => "string|required|unique:kk,no_kk|max:16",
+            "no_kk"         => $this->rules["no_kk"],
             "no_whatsapp"   => "string|required",
             "foto_kk"       => [
                 "required",
                 File::image()->max(2048)
             ],
             "nama"          => "string|required",
-            "nik"           => "string|required|max:16|unique:anggota_keluarga,nik"
+            "nik"           => $this->rules["nik"]
+        ], [
+            "no_kk" => ["unique"    => "Nomor KK telah terdaftar."],
+            "nik"   => ["unique"    => "Nomor Nik telah terdaftar."]
         ]));
 
         if ($validationResult !== true) return $validationResult;
@@ -49,7 +59,7 @@ class AuthController extends Controller
             $kk->foto_kk = $fileName;
             $kk->save();
 
-            $user = new User;
+            $user = new Penduduk;
             $user->no_kk = $kk->no_kk;
             $user->nik_anggota_keluarga = $request->nik;
             $user->no_whatsapp = $request->no_whatsapp;
@@ -63,6 +73,6 @@ class AuthController extends Controller
             return $user;
         }, 5);
 
-        return $this->responseSuccess(["user" => $user]);
+        return $this->responseSuccess(["penduduk" => $user]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ManagenemtFamilyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +20,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::controller(\App\Http\Controllers\AuthController::class)->group(function () {
+Route::controller(AuthController::class)->group(function () {
     Route::post("/users/register", "register");
+});
+
+Route::controller(ManagenemtFamilyController::class)->group(function () {
+    Route::get("/anggota-keluarga", "index");
+    Route::post("/anggota-keluarga", "create");
 });
