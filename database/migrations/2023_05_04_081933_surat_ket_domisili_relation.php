@@ -14,7 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table("surat_ket_domisili", function (Blueprint $table) {
-            $table->foreignId("pemohon")->constrained("anggota_keluarga");
+            $table->string("pemohon", 16);
+            $table->foreign("pemohon")->references("nik")->on("anggota_keluarga");
         });
     }
 

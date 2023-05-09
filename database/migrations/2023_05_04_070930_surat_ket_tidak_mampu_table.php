@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create("surat_ket_tidak_mampu", function (Blueprint $table) {
             $table->id();
             $table->string("surat_pengantar");
+            $table->timestamps();
         });
     }
 

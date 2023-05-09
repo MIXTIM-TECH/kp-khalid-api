@@ -3,14 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+class AnggotaKeluarga extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
-    protected $primaryKey = "id_anggota_keluarga";
+    protected $table = "anggota_keluarga";
+    protected $primaryKey = "nik";
     protected $keyType = "string";
     public $incrementing = false;
 }

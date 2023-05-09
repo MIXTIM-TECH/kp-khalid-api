@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create("orang_tua_surat_skck", function (Blueprint $table) {
             $table->foreignId("id_surat_skck")->constrained("surat_skck");
             $table->foreignId("id_orang_tua")->constrained("orang_tua");
+            $table->timestamps();
         });
     }
 

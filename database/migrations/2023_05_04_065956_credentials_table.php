@@ -14,10 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create("credentials", function (Blueprint $table) {
-            $table->string("username");
             $table->string("password");
-            $table->enum("role", ["super_admin", "admin", "user"]);
-            $table->enum("status", ["aktif", "tidak_aktif"]);
+            $table->enum("role", ["super_admin", "admin", "user"])->default("user");
+            $table->boolean("status")->default(0);
+            $table->timestamps();
         });
     }
 

@@ -14,17 +14,17 @@ return new class extends Migration
     public function up()
     {
         Schema::create("anggota_keluarga", function (Blueprint $table) {
-            $table->id();
+            $table->string("nik", 16)->unique()->primary();
             $table->string("nama");
-            $table->string("nik", 16)->unique();
             $table->enum("jenis_kelamin", ["P", "L"])->nullable();
             $table->string("tempat_lahir")->nullable();
             $table->date("tanggal_lahir")->nullable();
             $table->enum("status", ["kawin", "belum_kawin"])->nullable();
             $table->enum("pendidikan", ["SD", "SMP", "SMA", "D3", "S1", "S2", "S3"])->nullable();
-            $table->string("jenis_pekerjaan");
-            $table->enum("agama", ["Islam", "Kristen Protestan", "Katolik", "Hindu", "Buddha", "Kong Hu Cu",]);
-            $table->enum("status_perkawinan", ["menikah", "belum_menikah", "cerai_hidup", "cerai_mati"]);
+            $table->string("jenis_pekerjaan")->nullable();
+            $table->enum("agama", ["Islam", "Kristen Protestan", "Katolik", "Hindu", "Buddha", "Kong Hu Cu",])->nullable();
+            $table->enum("status_perkawinan", ["menikah", "belum_menikah", "cerai_hidup", "cerai_mati"])->nullable();
+            $table->timestamps();
         });
     }
 

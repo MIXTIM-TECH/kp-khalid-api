@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string("tanggal_lahir");
             $table->string("pekerjaan");
             $table->string("status_perkawinan");
+            $table->timestamps();
         });
     }
 

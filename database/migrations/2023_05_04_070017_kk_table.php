@@ -15,8 +15,9 @@ return new class extends Migration
     {
         Schema::create("kk", function (Blueprint $table) {
             $table->string("no_kk", 16)->primary();
-            $table->string("foto_kk", 20); // file_name
+            $table->string("foto_kk"); // file_name
             $table->integer("jumlah_keluarga")->default(1);
+            $table->timestamps();
         });
     }
 

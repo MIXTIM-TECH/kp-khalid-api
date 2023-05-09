@@ -13,9 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table("surat_pengantar_perkawinan", function (Blueprint $table) {
-            $table->string("pemohon", 16);
-            $table->foreign("pemohon")->references("nik")->on("anggota_keluarga");
+        Schema::table("credentials", function (Blueprint $table) {
+            $table->string("username", 16);
+            $table->foreign("username")->references("nik")->on("anggota_keluarga");
+            $table->primary("username");
         });
     }
 

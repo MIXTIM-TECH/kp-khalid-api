@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string("tanggal_lahir")->nullable();
             $table->string("pekerjaan")->nullable();
             $table->enum("kategori", ["ayah", "ibu"])->nullable();
+            $table->timestamps();
         });
     }
 

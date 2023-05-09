@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Http\Res;
+
 class Api
 {
     public static function success($data): array

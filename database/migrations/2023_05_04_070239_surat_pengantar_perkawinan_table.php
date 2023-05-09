@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create("surat_pengantar_perkawinan", function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
         });
     }
 

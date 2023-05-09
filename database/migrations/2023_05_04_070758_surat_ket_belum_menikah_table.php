@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string("surat_pengantar"); // file_name
             $table->text("keperluan");
+            $table->timestamps();
         });
     }
 

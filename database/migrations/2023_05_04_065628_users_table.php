@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create("users", function (Blueprint $table) {
-            $table->id();
             $table->string("no_whatsapp", 20);
+            $table->timestamps();
         });
     }
 

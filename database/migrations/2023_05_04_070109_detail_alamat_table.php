@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string("kabupaten")->nullable();
             $table->string("provinsi")->nullable();
             $table->enum("type", ["orang_tua", "anggota_keluarga", "surat_ket_tidak_mampu"]);
+            $table->timestamps();
         });
     }
 
