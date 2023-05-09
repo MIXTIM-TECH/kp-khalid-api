@@ -21,4 +21,9 @@ class Controller extends BaseController
     {
         return response()->json(Api::success($data));
     }
+
+    protected function responseNotFound(string $message)
+    {
+        return response()->json(Api::fail($message), 404);
+    }
 }

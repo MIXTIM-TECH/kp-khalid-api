@@ -22,7 +22,21 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // 
+        $validationResult = $this->checkValidator(Validator::make($request->all(), [
+            "username"      => "required",
+            "password"      => "required"
+        ]));
+
+        if ($validationResult !== true) return $validationResult;
+
+        // validasi user
+        $credential = Credential::find($request->username);
+        if (!$credential || !password_verify($request->password, $credential->password)) {
+            return $this->responseNotFound("Username atau password salah");
+        }
+
+        // generate token
+        return ["test" => $credential];
     }
 
     public function register(Request $request)

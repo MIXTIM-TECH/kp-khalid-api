@@ -22,13 +22,13 @@ class ManagenemtFamilyController extends Controller
 
     public function create(Request $request)
     {
-        $validationResult = $this->checkValidator(Validator::make($request->all(), [
-            "nik"           => $this->rules["nik"],
-            "no_kk"         => "required|exists:kk,no_kk",
-            "no_whatsapp"   => "max:20"
-        ]));
+        // $validationResult = $this->checkValidator(Validator::make($request->all(), [
+        //     "nik"           => $this->rules["nik"],
+        //     "no_kk"         => "required|exists:kk,no_kk",
+        //     "no_whatsapp"   => "max:20"
+        // ]));
 
-        if ($validationResult !== true) return $validationResult;
+        // if ($validationResult !== true) return $validationResult;
 
         // validasi kepala keluarga
 
