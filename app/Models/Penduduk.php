@@ -11,7 +11,7 @@ class Penduduk extends Authenticatable
 
     protected $table = "penduduk";
     protected $guarded = [];
-    protected $primaryKey = "id_anggota_keluarga";
+    protected $primaryKey = "nik_anggota_keluarga";
     protected $keyType = "string";
     public $incrementing = false;
 }

@@ -6,6 +6,8 @@ use App\Models\AnggotaKeluarga;
 use App\Models\Credential;
 use App\Models\KK;
 use App\Models\Penduduk;
+use Exception;
+use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -20,6 +22,15 @@ class AuthController extends Controller
         $this->rules = require_once(app_path("Http/Req/ValidationRules.php"));
     }
 
+    private function generateToken($payload, $key)
+    {
+        try {
+            JWT::encode($payload, $key, "HS256");
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
     public function login(Request $request)
     {
         $validationResult = $this->checkValidator(Validator::make($request->all(), [
@@ -30,13 +41,28 @@ class AuthController extends Controller
         if ($validationResult !== true) return $validationResult;
 
         // validasi user
-        $credential = Credential::find($request->username);
+        $credential = Credential::where("username", $request->username)->with("penduduk")->first();
         if (!$credential || !password_verify($request->password, $credential->password)) {
             return $this->responseNotFound("Username atau password salah");
         }
+        if (!$request->status) return $this->responseUnauthorize("Akun anda belum bisa digunakan, Harap tunggu atau hubungi admin kelurahan.");
 
         // generate token
-        return ["test" => $credential];
+        $payload = [
+            "role"  => $credential->role,
+            "nik"   => $credential->penduduk->nik_anggota_keluarga
+        ];
+        $keys = ["access" => env("JWT_SECRET"), "refresh" => env("JWT_REFRESH")];
+        $tokens = [];
+        foreach ($keys as $prop => $key) {
+            try {
+                $tokens["token_$prop"] = JWT::encode($payload, $key, "HS256");
+            } catch (Exception $e) {
+                return $this->unknownResponse($e->getMessage());
+            }
+        }
+
+        return $this->responseSuccess($tokens);
     }
 
     public function register(Request $request)

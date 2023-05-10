@@ -26,4 +26,14 @@ class Controller extends BaseController
     {
         return response()->json(Api::fail($message), 404);
     }
+
+    protected function responseUnauthorize(string $message)
+    {
+        return response()->json(Api::fail($message), 403);
+    }
+
+    protected function unknownResponse(string $message, $status = 500)
+    {
+        return response()->json(Api::fail($message, $status));
+    }
 }

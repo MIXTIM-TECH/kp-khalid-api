@@ -14,4 +14,9 @@ class Credential extends Model
     protected $keyType = "string";
     protected $hidden = ["username", "password"];
     public $incrementing = false;
+
+    public function penduduk()
+    {
+        return $this->hasOne(Penduduk::class, "nik_anggota_keluarga");
+    }
 }
