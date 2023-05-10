@@ -30,7 +30,7 @@ Route::middleware([Auth::class, Admin::class])->group(function () {
 // TODO: User
 Route::middleware(Auth::class)->group(function () {
     Route::controller(ManagenemtFamilyController::class)->group(function () {
-        Route::get("/anggota-keluarga", "index");
+        Route::get("/anggota-keluarga/{noKK}", "index");
         Route::post("/anggota-keluarga", "create");
     });
 });

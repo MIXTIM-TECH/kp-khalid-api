@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\AnggotaKeluarga;
+use App\Models\KK;
+use App\Models\Penduduk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ManagenemtFamilyController extends Controller
@@ -15,27 +18,45 @@ class ManagenemtFamilyController extends Controller
         $this->rules = require_once(app_path("Http/Req/ValidationRules.php"));
     }
 
-    public function index()
+    public function index(KK $noKK)
     {
-        return $this->responseSuccess(AnggotaKeluarga::all());
+        return $this->responseSuccess($noKK::with("anggotaKeluarga")->get());
     }
 
     public function create(Request $request)
     {
-        // $validationResult = $this->checkValidator(Validator::make($request->all(), [
-        //     "nik"           => $this->rules["nik"],
-        //     "no_kk"         => "required|exists:kk,no_kk",
-        //     "no_whatsapp"   => "max:20"
-        // ]));
+        $validationResult = $this->checkValidator(Validator::make($request->all(), [
+            "nama"          => "required|string",
+            "nik"           => $this->rules["nik"],
+            "no_kk"         => "required|exists:kk,no_kk",
+            "no_whatsapp"   => "max:20"
+        ]));
 
-        // if ($validationResult !== true) return $validationResult;
+        if ($validationResult !== true) return $validationResult;
 
-        // validasi kepala keluarga
+        $result = DB::transaction(function () use ($request) {
+            // tambah anggota keluarga
+            $anggotaKeluarga = new AnggotaKeluarga;
+            $anggotaKeluarga->nama = $request->nama;
+            $anggotaKeluarga->nik = $request->nik;
+            $anggotaKeluarga->no_kk = $request->no_kk;
+            $anggotaKeluarga->save();
 
-        // tambah anggota keluarga
+            // update jumlah keluarga (table kk)
+            $kk = KK::find($anggotaKeluarga->no_kk);
+            $kk->jumlah_keluarga += 1;
+            $kk->save();
 
-        // update jumlah keluarga (table kk)
+            // tambah data penduduk
+            $penduduk = new Penduduk;
+            $penduduk->no_kk = $request->no_kk;
+            $penduduk->nik_anggota_keluarga = $anggotaKeluarga->nik;
+            $penduduk->no_whatsapp = $request->no_whatsapp;
+            $penduduk->save();
 
-        // tambah data penduduk
+            return $anggotaKeluarga;
+        });
+
+        return $this->responseSuccess($result);
     }
 }

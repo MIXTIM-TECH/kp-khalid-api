@@ -14,4 +14,9 @@ class KK extends Model
     protected $primaryKey = "no_kk";
     protected $keyType = "string";
     public $incrementing = false;
+
+    public function anggotaKeluarga()
+    {
+        return $this->hasMany(AnggotaKeluarga::class, "no_kk");
+    }
 }

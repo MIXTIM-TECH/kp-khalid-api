@@ -88,9 +88,6 @@ class AuthController extends Controller
             ],
             "nama"          => "string|required",
             "nik"           => $this->rules["nik"]
-        ], [
-            "no_kk" => ["unique"    => "Nomor KK telah terdaftar."],
-            "nik"   => ["unique"    => "Nomor Nik telah terdaftar."]
         ]));
 
         if ($validationResult !== true) return $validationResult;
