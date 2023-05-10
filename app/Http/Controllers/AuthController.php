@@ -56,6 +56,8 @@ class AuthController extends Controller
         $keys = ["access" => env("JWT_SECRET"), "refresh" => env("JWT_REFRESH")];
         foreach ($keys as $prop => $key) {
             try {
+                $exp = $this->time;
+                $payload["exp"] = $exp;
                 $tokens["token_$prop"] = JWT::encode($payload, $key, "HS256");
             } catch (Exception $e) {
                 return $this->unknownResponse($e->getMessage());
