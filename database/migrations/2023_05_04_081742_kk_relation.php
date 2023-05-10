@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table("kk", function (Blueprint $table) {
             $table->string("nik_kepala_keluarga", 16);
-            $table->foreign("nik_kepala_keluarga")->references("nik")->on("anggota_keluarga");
+            $table->foreign("nik_kepala_keluarga")->references("nik")->on("anggota_keluarga")->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 

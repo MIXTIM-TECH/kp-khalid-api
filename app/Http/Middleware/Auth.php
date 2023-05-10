@@ -28,7 +28,7 @@ class Auth
             $request->user = $payload;
             return $next($request);
         } catch (Exception $e) {
-            return response()->json(Api::fail($e->getMessage()), 500);
+            return response()->json(Api::fail($e->getMessage()), 401);
         }
     }
 }

@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table("surat_pengantar_perkawinan", function (Blueprint $table) {
-            $table->string("pemohon", 16);
-            $table->foreign("pemohon")->references("nik")->on("anggota_keluarga");
+            $table->string("pemohon", 16)->nullable();
+            $table->foreign("pemohon")->references("nik")->on("anggota_keluarga")->cascadeOnUpdate()->nullOnDelete();
         });
     }
 

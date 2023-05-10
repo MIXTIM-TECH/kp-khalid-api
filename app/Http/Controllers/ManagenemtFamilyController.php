@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Res\Api;
 use App\Models\AnggotaKeluarga;
 use App\Models\KK;
 use App\Models\Penduduk;
@@ -58,5 +59,34 @@ class ManagenemtFamilyController extends Controller
         });
 
         return $this->responseSuccess($result);
+    }
+
+    public function update(KK $noKK)
+    {
+        // 
+    }
+
+    public function destroy(KK $kk, Request $request)
+    {
+        // validasi jika yang dihapus adalah nik kepala keluarga
+        if ($kk->nik_kepala_keluarga === $request->nik)
+            return response()->json(Api::fail("Tidak dapat menghapus kepala keluarga."));
+
+        $result = DB::transaction(function () use ($kk, $request) {
+            // kurangi jumlah keluarga
+            $kk->jumlah_keluarga -= 1;
+            $kk->save();
+
+            // anggota keluarga
+            $anggotaKeluarga = AnggotaKeluarga::find($request->nik);
+            if (!$anggotaKeluarga) {
+                DB::rollBack();
+                return $this->responseNotFound("Nik tidak terdaftar sebagai anggota keluarga.");
+            }
+
+            return $this->responseSuccess($anggotaKeluarga->delete());
+        });
+
+        return $result;
     }
 }

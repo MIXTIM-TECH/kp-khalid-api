@@ -32,6 +32,8 @@ Route::middleware(Auth::class)->group(function () {
     Route::controller(ManagenemtFamilyController::class)->group(function () {
         Route::get("/anggota-keluarga/{noKK}", "index");
         Route::post("/anggota-keluarga", "create");
+        Route::put("/anggota-keluarga/{noKK}", "update");
+        Route::delete("/anggota-keluarga/{kk}", "destroy");
     });
 });
 
