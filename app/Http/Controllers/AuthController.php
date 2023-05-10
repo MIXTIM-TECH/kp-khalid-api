@@ -26,6 +26,23 @@ class AuthController extends Controller
         return $days * $day;
     }
 
+    private function generateToken(array $payload): array
+    {
+        $keys = ["access" => env("JWT_SECRET"), "refresh" => env("JWT_REFRESH")];
+        foreach ($keys as $prop => $key) {
+            try {
+                $exp = $this->time + 3600; // 1 jam
+                if ($prop === "refresh") $exp = $this->time + $this->getSecondDays(7);
+
+                $payload["exp"] = $exp;
+                $tokens["token_$prop"] = JWT::encode($payload, $key, "HS256");
+            } catch (Exception $e) {
+                return $this->unknownResponse($e->getMessage());
+            }
+        }
+        return $tokens;
+    }
+
     public function __construct()
     {
         $this->rules = require_once(app_path("Http/Req/ValidationRules.php"));
@@ -51,18 +68,10 @@ class AuthController extends Controller
         // generate token
         $payload = [
             "role"  => $credential->role,
-            "nik"   => $credential->penduduk->nik_anggota_keluarga
+            "nik"   => $credential->penduduk->nik_anggota_keluarga,
+            "iat"   => $this->time
         ];
-        $keys = ["access" => env("JWT_SECRET"), "refresh" => env("JWT_REFRESH")];
-        foreach ($keys as $prop => $key) {
-            try {
-                $exp = $this->time;
-                $payload["exp"] = $exp;
-                $tokens["token_$prop"] = JWT::encode($payload, $key, "HS256");
-            } catch (Exception $e) {
-                return $this->unknownResponse($e->getMessage());
-            }
-        }
+        $tokens = $this->generateToken($payload);
 
         return $this->responseSuccess(array_merge($payload, $tokens));
     }
@@ -134,8 +143,10 @@ class AuthController extends Controller
 
         try {
             $payload = JWT::decode($request->token_refresh, new Key(env("JWT_REFRESH"), "HS256"));
-            $token = JWT::encode((array) $payload, env("JWT_SECRET"), "HS256");
-            return $this->responseSuccess(["token_access" => $token]);
+            $payload->iat = $this->time;
+            $tokens = $this->generateToken((array) $payload);
+
+            return $this->responseSuccess($tokens);
         } catch (Exception $e) {
             return $this->unknownResponse($e->getMessage());
         }
