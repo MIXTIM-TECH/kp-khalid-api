@@ -19,4 +19,9 @@ class Credential extends Model
     {
         return $this->hasOne(Penduduk::class, "nik_anggota_keluarga");
     }
+
+    public function waktuAktivasi()
+    {
+        return $this->hasOne(WaktuAktivasi::class, "username");
+    }
 }

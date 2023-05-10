@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CredentialController;
 use App\Http\Controllers\ManagenemtFamilyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,4 +30,10 @@ Route::controller(AuthController::class)->group(function () {
 Route::controller(ManagenemtFamilyController::class)->group(function () {
     Route::get("/anggota-keluarga", "index");
     Route::post("/anggota-keluarga", "create");
+});
+
+Route::controller(CredentialController::class)->group(function () {
+    Route::get("/data-pendaftar", "pendaftar");
+    Route::get("/data-pendaftar-kadaluarsa", "pendaftarKadaluarsa");
+    Route::patch("/pendaftar/update-status/{userCredential}", "activation");
 });

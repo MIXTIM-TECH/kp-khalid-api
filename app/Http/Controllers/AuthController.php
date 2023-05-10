@@ -6,6 +6,7 @@ use App\Models\AnggotaKeluarga;
 use App\Models\Credential;
 use App\Models\KK;
 use App\Models\Penduduk;
+use App\Models\WaktuAktivasi;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -16,11 +17,19 @@ use Illuminate\Validation\Rules\File;
 
 class AuthController extends Controller
 {
-    private $rules;
+    private $rules, $time;
+
+    private function getSecondDays(int $day): int
+    {
+        $hours = 3600;
+        $days = $hours * 24;
+        return $days * $day;
+    }
 
     public function __construct()
     {
         $this->rules = require_once(app_path("Http/Req/ValidationRules.php"));
+        $this->time = time();
     }
 
     public function login(Request $request)
@@ -100,6 +109,12 @@ class AuthController extends Controller
             $credential->username = $request->nik;
             $credential->password = password_hash($request->password, PASSWORD_DEFAULT);
             $credential->save();
+
+            $waktuAktivasi = new WaktuAktivasi;
+            $waktuAktivasi->username = $request->nik;
+            $waktuAktivasi->tanggal_registrasi = $this->time;
+            $waktuAktivasi->batas_aktivasi = $this->time + $this->getSecondDays(2);
+            $waktuAktivasi->save();
 
             return $user;
         }, 5);
