@@ -8,6 +8,7 @@ use App\Models\KK;
 use App\Models\Penduduk;
 use Exception;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -20,15 +21,6 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->rules = require_once(app_path("Http/Req/ValidationRules.php"));
-    }
-
-    private function generateToken($payload, $key)
-    {
-        try {
-            JWT::encode($payload, $key, "HS256");
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
     }
 
     public function login(Request $request)
@@ -45,7 +37,7 @@ class AuthController extends Controller
         if (!$credential || !password_verify($request->password, $credential->password)) {
             return $this->responseNotFound("Username atau password salah");
         }
-        if (!$request->status) return $this->responseUnauthorize("Akun anda belum bisa digunakan, Harap tunggu atau hubungi admin kelurahan.");
+        if (!$credential->status) return $this->responseUnauthorize("Akun anda belum bisa digunakan, Harap tunggu atau hubungi admin kelurahan.");
 
         // generate token
         $payload = [
@@ -53,7 +45,6 @@ class AuthController extends Controller
             "nik"   => $credential->penduduk->nik_anggota_keluarga
         ];
         $keys = ["access" => env("JWT_SECRET"), "refresh" => env("JWT_REFRESH")];
-        $tokens = [];
         foreach ($keys as $prop => $key) {
             try {
                 $tokens["token_$prop"] = JWT::encode($payload, $key, "HS256");
@@ -62,7 +53,7 @@ class AuthController extends Controller
             }
         }
 
-        return $this->responseSuccess($tokens);
+        return $this->responseSuccess(array_merge($payload, $tokens));
     }
 
     public function register(Request $request)
@@ -114,5 +105,22 @@ class AuthController extends Controller
         }, 5);
 
         return $this->responseSuccess(["penduduk" => $user]);
+    }
+
+    public function refreshToken(Request $request)
+    {
+        $validationResult = $this->checkValidator(Validator::make($request->all(), [
+            "token_refresh" => "required"
+        ]));
+
+        if ($validationResult !== true) return $validationResult;
+
+        try {
+            $payload = JWT::decode($request->token_refresh, new Key(env("JWT_REFRESH"), "HS256"));
+            $token = JWT::encode((array) $payload, env("JWT_SECRET"), "HS256");
+            return $this->responseSuccess(["token_access" => $token]);
+        } catch (Exception $e) {
+            return $this->unknownResponse($e->getMessage());
+        }
     }
 }
