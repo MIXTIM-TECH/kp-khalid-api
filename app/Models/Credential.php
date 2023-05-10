@@ -12,7 +12,7 @@ class Credential extends Model
     protected $guarded = [];
     protected $primaryKey = "username";
     protected $keyType = "string";
-    protected $hidden = ["username", "password"];
+    protected $hidden = ["password"];
     public $incrementing = false;
 
     public function penduduk()

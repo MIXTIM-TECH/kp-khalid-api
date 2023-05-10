@@ -24,7 +24,8 @@ class Auth
         if (!$token) return response()->json(Api::fail("Authorization Required"), 401);
 
         try {
-            JWT::decode($token, new Key(env("JWT_SECRET"), "HS256"));
+            $payload = JWT::decode($token, new Key(env("JWT_SECRET"), "HS256"));
+            $request->user = $payload;
             return $next($request);
         } catch (Exception $e) {
             return response()->json(Api::fail($e->getMessage()), 500);

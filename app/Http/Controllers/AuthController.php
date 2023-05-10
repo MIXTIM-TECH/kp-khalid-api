@@ -59,17 +59,17 @@ class AuthController extends Controller
         if ($validationResult !== true) return $validationResult;
 
         // validasi user
-        $credential = Credential::where("username", $request->username)->with("penduduk")->first();
-        if (!$credential || !password_verify($request->password, $credential->password)) {
+        $credential = Credential::where("username", $request->username)->first();
+        if (!$credential || !password_verify($request->password, $credential->password))
             return $this->responseNotFound("Username atau password salah");
-        }
-        if (!$credential->status) return $this->responseUnauthorize("Akun anda belum bisa digunakan, Harap tunggu atau hubungi admin kelurahan.");
+        if (!$credential->status)
+            return $this->responseUnauthorize("Akun anda belum bisa digunakan, Harap tunggu 2x 24-Jam atau hubungi admin kelurahan.");
 
         // generate token
         $payload = [
-            "role"  => $credential->role,
-            "nik"   => $credential->penduduk->nik_anggota_keluarga,
-            "iat"   => $this->time
+            "username"  => $credential->username,
+            "role"      => $credential->role,
+            "iat"       => $this->time
         ];
         $tokens = $this->generateToken($payload);
 
@@ -109,6 +109,10 @@ class AuthController extends Controller
             $kk->nik_kepala_keluarga = $request->nik;
             $kk->foto_kk = $fileName;
             $kk->save();
+
+            // update nomor kk
+            $anggotaKeluarga->no_kk = $kk->no_kk;
+            $anggotaKeluarga->save();
 
             $user = new Penduduk;
             $user->no_kk = $kk->no_kk;

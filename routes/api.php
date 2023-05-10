@@ -3,8 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CredentialController;
 use App\Http\Controllers\ManagenemtFamilyController;
+use App\Http\Middleware\Admin;
 use App\Http\Middleware\Auth;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,16 +18,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::middleware(Auth::class)->group(function () {
-    Route::controller(ManagenemtFamilyController::class)->group(function () {
-        Route::get("/anggota-keluarga", "index");
-        Route::post("/anggota-keluarga", "create");
-    });
-
+// TODO: Admin
+Route::middleware([Auth::class, Admin::class])->group(function () {
     Route::controller(CredentialController::class)->group(function () {
         Route::get("/data-pendaftar", "pendaftar");
         Route::get("/data-pendaftar-kadaluarsa", "pendaftarKadaluarsa");
@@ -35,6 +27,15 @@ Route::middleware(Auth::class)->group(function () {
     });
 });
 
+// TODO: User
+Route::middleware(Auth::class)->group(function () {
+    Route::controller(ManagenemtFamilyController::class)->group(function () {
+        Route::get("/anggota-keluarga", "index");
+        Route::post("/anggota-keluarga", "create");
+    });
+});
+
+// TODO: Public
 Route::controller(AuthController::class)->group(function () {
     Route::post("/register", "register");
     Route::post("/login", "login");
