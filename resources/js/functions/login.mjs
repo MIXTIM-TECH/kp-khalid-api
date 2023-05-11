@@ -5,7 +5,8 @@ const login = async (target) => {
     const result = await post("login", new FormData(target));
 
     if (result.ok) {
-        //
+        // load javascript file
+        import("../pages/after-login.mjs");
     }
     console.log(result);
 };
