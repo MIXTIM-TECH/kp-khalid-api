@@ -70,7 +70,7 @@ class ManagenemtFamilyController extends Controller
     {
         // validasi jika yang dihapus adalah nik kepala keluarga
         if ($kk->nik_kepala_keluarga === $request->nik)
-            return response()->json(Api::fail("Tidak dapat menghapus kepala keluarga."));
+            return response()->json(Api::fail("Tidak dapat menghapus kepala keluarga, silakan ganti kepala keluarga terlebih dahulu."));
 
         $result = DB::transaction(function () use ($kk, $request) {
             // kurangi jumlah keluarga
