@@ -1,5 +1,1 @@
-import testModule from "./test.mjs";
-
-testModule();
-
-console.log("test");
+import "./pages/landing-page.mjs";
