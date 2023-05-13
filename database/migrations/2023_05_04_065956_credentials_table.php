@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string("username", 16)->unique()->primary();
             $table->string("password");
             $table->enum("role", ["super_admin", "admin", "user"])->default("user");
-            $table->boolean("status")->default(0);
+            $table->enum("status", ["aktif", "tidak_aktif", "ditolak"])->default("tidak_aktif");
             $table->timestamps();
         });
     }

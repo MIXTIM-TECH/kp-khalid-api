@@ -24,7 +24,8 @@ Route::middleware([Auth::class, Admin::class])->group(function () {
     Route::controller(CredentialController::class)->group(function () {
         Route::get("/data-pendaftar", "pendaftar");
         Route::get("/data-pendaftar-kadaluarsa", "pendaftarKadaluarsa");
-        Route::patch("/pendaftar/update-status/{userCredential}", "activation");
+        Route::patch("/pendaftar/{userCredential}/aktivasi", "activation");
+        Route::patch("/pendaftar/{userCredential}/tolak", "reject");
     });
 });
 

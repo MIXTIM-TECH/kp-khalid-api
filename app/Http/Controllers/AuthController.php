@@ -64,8 +64,9 @@ class AuthController extends Controller
 
         if (!$credential || !password_verify($request->password, $credential->password))
             return $this->responseNotFound("Username atau password salah");
-        if (!$credential->status)
+        if ($credential->status === "tidak_aktif")
             return $this->responseUnauthorize("Akun anda belum bisa digunakan, Harap tunggu 2x 24-Jam atau hubungi admin kelurahan.");
+        if ($credential->status === "ditolak") return $this->responseUnauthorize("Maaf, akun anda ditolak untuk aktivasi.");
 
         // generate token
         $payload = [
