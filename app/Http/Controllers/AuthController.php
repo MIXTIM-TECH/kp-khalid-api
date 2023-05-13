@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Alamat;
 use App\Models\AnggotaKeluarga;
 use App\Models\Credential;
 use App\Models\KK;
@@ -98,7 +99,12 @@ class AuthController extends Controller
         $fileName = $request->file("foto_kk")->store("kk", "penduduk");
 
         $user = DB::transaction(function () use ($request, $fileName) {
+            $alamat = new Alamat;
+            $alamat->type = "anggota_keluarga";
+            $alamat->save();
+
             $anggotaKeluarga = new AnggotaKeluarga;
+            $anggotaKeluarga->id_detail_alamat = $alamat->id;
             $anggotaKeluarga->nama = $request->nama;
             $anggotaKeluarga->nik = $request->nik;
             $anggotaKeluarga->save();

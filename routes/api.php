@@ -5,6 +5,7 @@ use App\Http\Controllers\CredentialController;
 use App\Http\Controllers\ManagenemtFamilyController;
 use App\Http\Middleware\Admin;
 use App\Http\Middleware\Auth;
+use App\Http\Middleware\Patriach;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,7 +29,7 @@ Route::middleware([Auth::class, Admin::class])->group(function () {
 });
 
 // TODO: User
-Route::middleware(Auth::class)->group(function () {
+Route::middleware([Auth::class, Patriach::class])->group(function () {
     Route::controller(ManagenemtFamilyController::class)->group(function () {
         Route::get("/anggota-keluarga/{kk}", "index");
         Route::get("/anggota-keluarga/{kk}/{anggotaKeluarga}", "show");

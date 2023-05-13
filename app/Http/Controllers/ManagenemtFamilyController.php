@@ -23,14 +23,14 @@ class ManagenemtFamilyController extends Controller
 
     public function index(KK $kk)
     {
-        return $this->responseSuccess($kk->with("anggotaKeluarga")->get());
+        return $this->responseSuccess($kk->with("anggotaKeluarga")->find($kk->no_kk));
     }
 
     public function show(KK $kk, AnggotaKeluarga $anggotaKeluarga)
     {
         return $this->responseSuccess([
             "kk"                => $kk,
-            "anggota_keluarga"  => $anggotaKeluarga->with(["alamat", "penduduk"])->first()
+            "detail_keluarga"   => $anggotaKeluarga->with(["alamat", "penduduk"])->find($anggotaKeluarga->nik)
         ]);
     }
 
@@ -45,8 +45,14 @@ class ManagenemtFamilyController extends Controller
         if ($validationResult !== true) return $validationResult;
 
         $result = DB::transaction(function () use ($kk, $request) {
+            // tambah alamat
+            $alamat = new Alamat;
+            $alamat->type = "anggota_keluarga";
+            $alamat->save();
+
             // tambah anggota keluarga
             $anggotaKeluarga = new AnggotaKeluarga;
+            $anggotaKeluarga->id_detail_alamat = $alamat->id;
             $anggotaKeluarga->nama = $request->nama;
             $anggotaKeluarga->nik = $request->nik;
             $anggotaKeluarga->no_kk = $kk->no_kk;
@@ -125,7 +131,7 @@ class ManagenemtFamilyController extends Controller
             $anggotaKeluarga->status_perkawinan = $request->status_perkawinan;
             $anggotaKeluarga->save();
 
-            return $anggotaKeluarga->with(["alamat", "penduduk"])->first();
+            return $anggotaKeluarga->with(["alamat", "penduduk"])->find($anggotaKeluarga->nik);
         });
 
         return $this->responseSuccess($result);
