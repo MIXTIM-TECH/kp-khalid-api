@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CredentialController;
+use App\Http\Controllers\KKController;
 use App\Http\Controllers\ManagenemtFamilyController;
 use App\Http\Middleware\Admin;
 use App\Http\Middleware\Auth;
 use App\Http\Middleware\Patriach;
+use App\Http\Middleware\SuperAdmin;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,20 +21,31 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// TODO: Admin
-Route::middleware([Auth::class, Admin::class])->group(function () {
-    Route::controller(CredentialController::class)->group(function () {
-        Route::get("/data-pendaftar", "pendaftar");
-        Route::get("/data-pendaftar-kadaluarsa", "pendaftarKadaluarsa");
-        Route::get("/data-pendaftar-ditolak", "pendaftarDitolak");
-        Route::patch("/pendaftar/{userCredential}/aktivasi", "activation");
-        Route::patch("/pendaftar/{userCredential}/tolak", "reject");
+Route::middleware(Auth::class)->group(function () {
+    // TODO: Super Admin
+    Route::middleware(SuperAdmin::class)->controller(CredentialController::class)->group(function () {
+        Route::get("/admin", "admin");
+        Route::post("/admin", "createAdmin");
+        Route::delete("/admin/{admin}", "destroyAdmin");
     });
-});
 
-// TODO: User
-Route::middleware([Auth::class, Patriach::class])->group(function () {
-    Route::controller(ManagenemtFamilyController::class)->group(function () {
+    // TODO: Admin
+    Route::middleware(Admin::class)->group(function () {
+        Route::controller(CredentialController::class)->group(function () {
+            Route::get("/data-pendaftar", "pendaftar");
+            Route::get("/data-pendaftar-kadaluarsa", "pendaftarKadaluarsa");
+            Route::get("/data-pendaftar-ditolak", "pendaftarDitolak");
+            Route::patch("/pendaftar/{userCredential}/aktivasi", "activation");
+            Route::patch("/pendaftar/{userCredential}/tolak", "reject");
+        });
+
+        Route::controller(KKController::class)->group(function () {
+            Route::get("/data-keluarga", "index");
+        });
+    });
+
+    // TODO: User
+    Route::controller(ManagenemtFamilyController::class)->middleware(Patriach::class)->group(function () {
         Route::get("/anggota-keluarga/{kk}", "index");
         Route::get("/anggota-keluarga/{kk}/{anggotaKeluarga}", "show");
         Route::post("/anggota-keluarga/{kk}", "create");
@@ -40,6 +53,11 @@ Route::middleware([Auth::class, Patriach::class])->group(function () {
         Route::delete("/anggota-keluarga/{kk}/{anggotaKeluarga}", "destroy");
     });
 });
+
+
+// TODO: Get KK Image
+Route::get("/kk/image", [ManagenemtFamilyController::class  => "imageKK"]);
+
 
 // TODO: Public
 Route::controller(AuthController::class)->group(function () {

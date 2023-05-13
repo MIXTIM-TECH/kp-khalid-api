@@ -19,4 +19,9 @@ class KK extends Model
     {
         return $this->hasMany(AnggotaKeluarga::class, "no_kk");
     }
+
+    public function kepalaKeluarga()
+    {
+        return $this->hasOne(AnggotaKeluarga::class, "nik", "nik_kepala_keluarga");
+    }
 }

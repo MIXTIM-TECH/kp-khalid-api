@@ -155,4 +155,16 @@ class ManagenemtFamilyController extends Controller
 
         return $this->responseSuccess($result);
     }
+
+    public function imageKK(Request $request)
+    {
+        $validationResult = $this->checkValidator(Validator::make($request->all(), [
+            "token_access"  => "required|string",
+            "image_name"    => "required|string"
+        ]));
+
+        if ($validationResult !== true) return $validationResult;
+
+        return response()->download("penduduk/kk/{$request->image_name}");
+    }
 }
