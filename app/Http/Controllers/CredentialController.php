@@ -42,4 +42,9 @@ class CredentialController extends Controller
             $query->where("batas_aktivasi", "<", $this->time);
         })->where("status", "tidak_aktif")->get());
     }
+
+    public function pendaftarDitolak()
+    {
+        return $this->responseSuccess(Credential::with("penduduk")->where("status", "ditolak")->get());
+    }
 }
