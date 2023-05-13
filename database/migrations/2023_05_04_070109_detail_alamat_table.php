@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create("detail_alamat", function (Blueprint $table) {
             $table->id();
             $table->text("alamat");
-            $table->string("rt", 2)->nullable();
-            $table->string("rw", 2)->nullable();
+            $table->enum("rt", ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"])->nullable();
+            $table->enum("rw", ["1", "2", "3"])->nullable();
             $table->string("kelurahan")->nullable();
             $table->string("kecamatan")->nullable();
             $table->string("kabupaten")->nullable();

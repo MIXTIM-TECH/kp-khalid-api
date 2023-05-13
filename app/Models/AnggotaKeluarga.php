@@ -14,4 +14,14 @@ class AnggotaKeluarga extends Model
     protected $primaryKey = "nik";
     protected $keyType = "string";
     public $incrementing = false;
+
+    public function alamat()
+    {
+        return $this->hasOne(Alamat::class, "id", "id_detail_alamat");
+    }
+
+    public function penduduk()
+    {
+        return $this->hasOne(Penduduk::class, "nik_anggota_keluarga");
+    }
 }

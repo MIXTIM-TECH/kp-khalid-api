@@ -59,7 +59,8 @@ class AuthController extends Controller
         if ($validationResult !== true) return $validationResult;
 
         // validasi user
-        $credential = Credential::where("username", $request->username)->first();
+        $credential = Credential::with("penduduk")->where("username", $request->username)->first();
+
         if (!$credential || !password_verify($request->password, $credential->password))
             return $this->responseNotFound("Username atau password salah");
         if (!$credential->status)
@@ -71,6 +72,7 @@ class AuthController extends Controller
             "role"      => $credential->role,
             "iat"       => $this->time
         ];
+        if ($credential->penduduk) $payload["no_kk"] = $credential->penduduk->no_kk;
         $tokens = $this->generateToken($payload);
 
         return $this->responseSuccess(array_merge($payload, $tokens));

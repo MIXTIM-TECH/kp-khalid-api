@@ -15,8 +15,7 @@ return new class extends Migration
     {
         Schema::table("waktu_aktivasi", function (Blueprint $table) {
             $table->string("username", 16)->unique();
-            $table->foreign("username")->references("nik_kepala_keluarga")->on("kk");
-            $table->primary("username");
+            $table->foreign("username")->references("username")->on("credentials")->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 

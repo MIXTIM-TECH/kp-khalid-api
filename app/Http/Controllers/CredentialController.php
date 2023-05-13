@@ -19,7 +19,7 @@ class CredentialController extends Controller
     {
         $userCredential->status = true;
         $userCredential->save();
-        return $this->responseSuccess($userCredential);
+        return $this->responseSuccess("Aktivasi Berhasil");
     }
 
     public function pendaftar()

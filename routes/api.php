@@ -30,10 +30,11 @@ Route::middleware([Auth::class, Admin::class])->group(function () {
 // TODO: User
 Route::middleware(Auth::class)->group(function () {
     Route::controller(ManagenemtFamilyController::class)->group(function () {
-        Route::get("/anggota-keluarga/{noKK}", "index");
-        Route::post("/anggota-keluarga", "create");
-        Route::put("/anggota-keluarga/{noKK}", "update");
-        Route::delete("/anggota-keluarga/{kk}", "destroy");
+        Route::get("/anggota-keluarga/{kk}", "index");
+        Route::get("/anggota-keluarga/{kk}/{anggotaKeluarga}", "show");
+        Route::post("/anggota-keluarga/{kk}", "create");
+        Route::put("/anggota-keluarga/{kk}/{anggotaKeluarga}", "update");
+        Route::delete("/anggota-keluarga/{kk}/{anggotaKeluarga}", "destroy");
     });
 });
 
