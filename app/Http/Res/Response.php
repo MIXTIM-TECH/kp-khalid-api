@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Response;
+namespace App\Http\Res;
 
 use Illuminate\Validation\Validator;
 

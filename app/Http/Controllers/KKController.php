@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Response\Response;
+use App\Http\Res\Response;
 use App\Models\KK;
 
 class KKController extends Controller

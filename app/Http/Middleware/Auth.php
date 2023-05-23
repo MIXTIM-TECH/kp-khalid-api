@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Res\Api;
+use App\Http\Res\Response;
 use Closure;
 use Exception;
 use Firebase\JWT\JWT;
@@ -21,14 +21,14 @@ class Auth
     public function handle(Request $request, Closure $next)
     {
         $token = $request->bearerToken();
-        if (!$token) return response()->json(Api::fail("Authorization Required"), 401);
+        if (!$token) return Response::message("Dibutuhkan Token!", 401);
 
         try {
             $payload = JWT::decode($token, new Key(env("JWT_SECRET"), "HS256"));
             $request->user = $payload;
             return $next($request);
         } catch (Exception $e) {
-            return response()->json(Api::fail($e->getMessage()), 401);
+            return Response::message($e->getMessage());
         }
     }
 }

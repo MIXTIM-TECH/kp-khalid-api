@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Res\Api;
-use App\Http\Response\Response;
+use App\Http\Res\Response;
 use App\Models\Alamat;
 use App\Models\AnggotaKeluarga;
 use App\Models\KK;

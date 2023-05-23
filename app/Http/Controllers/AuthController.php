@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Response\Response;
+use App\Http\Res\Response;
 use App\Models\Alamat;
 use App\Models\AnggotaKeluarga;
 use App\Models\Credential;
@@ -87,7 +87,7 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $validator = $this->checkValidator(Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             "password"      => "string|required|min:8",
             "no_kk"         => $this->rules["no_kk"],
             "no_whatsapp"   => "string|required",
@@ -97,8 +97,7 @@ class AuthController extends Controller
             ],
             "nama"          => "string|required",
             "nik"           => $this->rules["nik"]
-        ]));
-
+        ]);
         if ($validator->fails()) return Response::errors($validator);
 
         // upload foto kk
@@ -150,9 +149,9 @@ class AuthController extends Controller
 
     public function refreshToken(Request $request)
     {
-        $validator = $this->checkValidator(Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             "token_refresh" => "required"
-        ]));
+        ]);
 
         if ($validator->fails()) return Response::errors($validator);
 
