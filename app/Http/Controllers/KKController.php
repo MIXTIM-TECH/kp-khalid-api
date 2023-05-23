@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Response\Response;
 use App\Models\KK;
 
 class KKController extends Controller
 {
     public function index()
     {
-        return $this->responseSuccess(KK::with("kepalaKeluarga")->get());
+        $dataKK = KK::with("kepalaKeluarga")->get();
+        return Response::success($dataKK->toArray());
     }
 }

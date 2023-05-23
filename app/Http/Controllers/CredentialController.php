@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Response\Response;
 use App\Models\Credential;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -20,48 +21,54 @@ class CredentialController extends Controller
     {
         $userCredential->status = "aktif";
         $userCredential->save();
-        return $this->responseSuccess("Aktivasi Berhasil");
+        return Response::message("Aktivasi Berhasil", 200);
     }
 
     public function reject(Credential $userCredential)
     {
         $userCredential->status = "ditolak";
         $userCredential->save();
-        return $this->responseSuccess("Pendaftar Ditolak");
+        return Response::message("Pendaftar Ditolak", 200);
     }
 
     public function pendaftar()
     {
-        return $this->responseSuccess(Credential::with("penduduk")->whereHas("waktuAktivasi", function (Builder $query) {
+        $dataPendaftar = Credential::with("penduduk")->whereHas("waktuAktivasi", function (Builder $query) {
             $query->where("batas_aktivasi", ">", $this->time);
-        })->where("status", "tidak_aktif")->get());
+        })->where("status", "tidak_aktif")->get();
+
+        return Response::success($dataPendaftar->toArray());
     }
 
     public function pendaftarKadaluarsa()
     {
-        return $this->responseSuccess(Credential::with("penduduk")->whereHas("waktuAktivasi", function (Builder $query) {
+        $dataPendaftarKadaluarsa = Credential::with("penduduk")->whereHas("waktuAktivasi", function (Builder $query) {
             $query->where("batas_aktivasi", "<", $this->time);
-        })->where("status", "tidak_aktif")->get());
+        })->where("status", "tidak_aktif")->get();
+
+        return Response::success($dataPendaftarKadaluarsa->toArray());
     }
 
     public function pendaftarDitolak()
     {
-        return $this->responseSuccess(Credential::with("penduduk")->where("status", "ditolak")->get());
+        $dataPendaftarDitolak = Credential::with("penduduk")->where("status", "ditolak")->get();
+        return Response::success($dataPendaftarDitolak->toArray());
     }
 
     public function admin()
     {
-        return $this->responseSuccess(Credential::where("role", "admin")->get());
+        $dataAdmin = Credential::where("role", "admin")->get();
+        return Response::success($dataAdmin);
     }
 
     public function createAdmin(Request $request)
     {
-        $validationResult = $this->checkValidator(Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             "username"      => "required|string|unique:credentials,username",
             "password"      => "required|min:8|string"
-        ]));
+        ]);
 
-        if ($validationResult !== true) return $validationResult;
+        if ($validator->fails()) return Response::errors($validator);
 
         $admin = new Credential;
         $admin->username = $request->username;
@@ -70,12 +77,12 @@ class CredentialController extends Controller
         $admin->status = "aktif";
         $admin->save();
 
-        return $this->responseSuccess("Admin Created");
+        return Response::success($admin->toArray());
     }
 
     public function destroyAdmin(Credential $admin)
     {
-        return $this->responseSuccess($admin->delete());
+        return $admin->delete() ? Response::message("Admin Berhasil Dihapus") : Response::message("Gagal Menghapus");
     }
 
     public function updateProfile(Request $request)
@@ -85,29 +92,26 @@ class CredentialController extends Controller
         if ($request->user->role === "user") $rules["username"] .= "|exists:anggota_keluarga,nik";
         if ($request->user->username !== $request->username) $rules .= "|unique:credentials,username";
 
-        $validationResult = $this->checkValidator(Validator::make($request->all(), $rules));
-
-        if ($validationResult !== true) return $validationResult;
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) return Response::errors($validator);
 
         // update credential
         $userCredential = Credential::find($request);
         $userCredential->username = $request->username;
         $userCredential->save();
 
-        return $this->responseSuccess($userCredential);
+        return Response::success($userCredential);
     }
 
     public function updatePassword(Request $request)
     {
-        $validationResult = $this->checkValidator(Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             "oldPassword"   => "required|string",
             "password"      => "required|min:8|string"
-        ]));
-
-        if ($validationResult !== true) return $validationResult;
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
 
         $userCredential = Credential::find($request->user->username);
-
         // cek password
         if (!password_verify($request->password, $userCredential->password)) {
             return $this->unknownResponse("Password salah!", 400);
@@ -117,6 +121,6 @@ class CredentialController extends Controller
         $userCredential->password = password_hash($request->password, PASSWORD_DEFAULT);
         $userCredential->save();
 
-        return $this->responseSuccess($userCredential);
+        return Response::success($userCredential);
     }
 }
