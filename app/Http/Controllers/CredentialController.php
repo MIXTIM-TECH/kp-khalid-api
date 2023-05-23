@@ -77,4 +77,46 @@ class CredentialController extends Controller
     {
         return $this->responseSuccess($admin->delete());
     }
+
+    public function updateProfile(Request $request)
+    {
+        $rules = ["username" => "required|string"];
+
+        if ($request->user->role === "user") $rules["username"] .= "|exists:anggota_keluarga,nik";
+        if ($request->user->username !== $request->username) $rules .= "|unique:credentials,username";
+
+        $validationResult = $this->checkValidator(Validator::make($request->all(), $rules));
+
+        if ($validationResult !== true) return $validationResult;
+
+        // update credential
+        $userCredential = Credential::find($request);
+        $userCredential->username = $request->username;
+        $userCredential->save();
+
+        return $this->responseSuccess($userCredential);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $validationResult = $this->checkValidator(Validator::make($request->all(), [
+            "oldPassword"   => "required|string",
+            "password"      => "required|min:8|string"
+        ]));
+
+        if ($validationResult !== true) return $validationResult;
+
+        $userCredential = Credential::find($request->user->username);
+
+        // cek password
+        if (!password_verify($request->password, $userCredential->password)) {
+            return $this->unknownResponse("Password salah!", 400);
+        }
+
+        // update credential
+        $userCredential->password = password_hash($request->password, PASSWORD_DEFAULT);
+        $userCredential->save();
+
+        return $this->responseSuccess($userCredential);
+    }
 }
