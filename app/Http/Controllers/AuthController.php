@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Res\Response;
 use App\Models\Alamat;
 use App\Models\AnggotaKeluarga;
 use App\Models\Credential;
@@ -20,6 +21,12 @@ class AuthController extends Controller
 {
     private $rules, $time;
 
+    public function __construct()
+    {
+        $this->rules = require_once(app_path("Http/Req/ValidationRules.php"));
+        $this->time = time();
+    }
+
     private function getSecondDays(int $day): int
     {
         $hours = 3600;
@@ -30,6 +37,8 @@ class AuthController extends Controller
     private function generateToken(array $payload): array
     {
         $keys = ["access" => env("JWT_SECRET"), "refresh" => env("JWT_REFRESH")];
+        $tokens = [];
+
         foreach ($keys as $prop => $key) {
             try {
                 $exp = $this->time + 3600; // 1 jam
@@ -38,35 +47,33 @@ class AuthController extends Controller
                 $payload["exp"] = $exp;
                 $tokens["token_$prop"] = JWT::encode($payload, $key, "HS256");
             } catch (Exception $e) {
-                return $this->unknownResponse($e->getMessage());
+                return Response::message($e->getMessage());
             }
         }
         return $tokens;
     }
 
-    public function __construct()
-    {
-        $this->rules = require_once(app_path("Http/Req/ValidationRules.php"));
-        $this->time = time();
-    }
-
     public function login(Request $request)
     {
-        $validationResult = $this->checkValidator(Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             "username"      => "required",
             "password"      => "required"
-        ]));
+        ]);
 
-        if ($validationResult !== true) return $validationResult;
+        if ($validator->fails()) return Response::errors($validator);
 
         // validasi user
         $credential = Credential::with("penduduk")->where("username", $request->username)->first();
 
-        if (!$credential || !password_verify($request->password, $credential->password))
-            return $this->responseNotFound("Username atau password salah");
-        if ($credential->status === "tidak_aktif")
-            return $this->responseUnauthorize("Akun anda belum bisa digunakan, Harap tunggu 2x 24-Jam atau hubungi admin kelurahan.");
-        if ($credential->status === "ditolak") return $this->responseUnauthorize("Maaf, akun anda ditolak untuk aktivasi.");
+        if (!$credential || !password_verify($request->password, $credential->password)) {
+            return Response::message("Username atau password salah", 400);
+        }
+        if ($credential->status === "tidak_aktif") {
+            return Response::message("Akun anda belum bisa digunakan, Harap tunggu 2x 24-Jam atau hubungi admin kelurahan.", 401);
+        }
+        if ($credential->status === "ditolak") {
+            return Response::message("Maaf, akun anda ditolak untuk aktivasi.", 403);
+        }
 
         // generate token
         $payload = [
@@ -75,14 +82,12 @@ class AuthController extends Controller
             "iat"       => $this->time
         ];
         if ($credential->penduduk) $payload["no_kk"] = $credential->penduduk->no_kk;
-        $tokens = $this->generateToken($payload);
-
-        return $this->responseSuccess(array_merge($payload, $tokens));
+        return Response::success(array_merge($payload, $this->generateToken($payload)));
     }
 
     public function register(Request $request)
     {
-        $validationResult = $this->checkValidator(Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             "password"      => "string|required|min:8",
             "no_kk"         => $this->rules["no_kk"],
             "no_whatsapp"   => "string|required",
@@ -92,9 +97,8 @@ class AuthController extends Controller
             ],
             "nama"          => "string|required",
             "nik"           => $this->rules["nik"]
-        ]));
-
-        if ($validationResult !== true) return $validationResult;
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
 
         // upload foto kk
         $fileName = $request->file("foto_kk")->store("kk", "penduduk");
@@ -140,25 +144,24 @@ class AuthController extends Controller
             return $user;
         }, 5);
 
-        return $this->responseSuccess(["penduduk" => $user]);
+        return Response::success(["penduduk" => $user]);
     }
 
     public function refreshToken(Request $request)
     {
-        $validationResult = $this->checkValidator(Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             "token_refresh" => "required"
-        ]));
+        ]);
 
-        if ($validationResult !== true) return $validationResult;
+        if ($validator->fails()) return Response::errors($validator);
 
         try {
             $payload = JWT::decode($request->token_refresh, new Key(env("JWT_REFRESH"), "HS256"));
             $payload->iat = $this->time;
-            $tokens = $this->generateToken((array) $payload);
 
-            return $this->responseSuccess($tokens);
+            return Response::success($this->generateToken((array) $payload));
         } catch (Exception $e) {
-            return $this->unknownResponse($e->getMessage());
+            return Response::message($e->getMessage());
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Res\Api;
+use App\Http\Res\Response;
 use App\Models\Alamat;
 use App\Models\AnggotaKeluarga;
 use App\Models\KK;
@@ -23,12 +23,13 @@ class ManagenemtFamilyController extends Controller
 
     public function index(KK $kk)
     {
-        return $this->responseSuccess($kk->with("anggotaKeluarga")->find($kk->no_kk));
+        $dataKeluarga = $kk->with("anggotaKeluarga")->find($kk->no_kk);
+        return Response::success($dataKeluarga->toArray());
     }
 
     public function show(KK $kk, AnggotaKeluarga $anggotaKeluarga)
     {
-        return $this->responseSuccess([
+        return Response::success([
             "kk"                => $kk,
             "detail_keluarga"   => $anggotaKeluarga->with(["alamat", "penduduk"])->find($anggotaKeluarga->nik)
         ]);
@@ -36,13 +37,12 @@ class ManagenemtFamilyController extends Controller
 
     public function create(KK $kk, Request $request)
     {
-        $validationResult = $this->checkValidator(Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             "nama"          => "required|string",
             "nik"           => $this->rules["nik"],
             "no_whatsapp"   => "max:20"
-        ]));
-
-        if ($validationResult !== true) return $validationResult;
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
 
         $result = DB::transaction(function () use ($kk, $request) {
             // tambah alamat
@@ -72,12 +72,12 @@ class ManagenemtFamilyController extends Controller
             return $anggotaKeluarga;
         });
 
-        return $this->responseSuccess($result);
+        return Response::success($result);
     }
 
     public function update(KK $kk, AnggotaKeluarga $anggotaKeluarga, Request $request)
     {
-        $validationResult = $this->checkValidator(Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             "no_whatsapp"       => "max:20",
             "nama"              => "required|string",
             "jenis_kelamin"     => Rule::in(["P", "L"]),
@@ -95,9 +95,8 @@ class ManagenemtFamilyController extends Controller
             "kecamatan"         => "string|max:255",
             "kabupaten"         => "string|max:255",
             "provinsi"          => "string|max:255",
-        ]));
-
-        if ($validationResult !== true) return $validationResult;
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
 
         $result = DB::transaction(function () use ($anggotaKeluarga, $request) {
             // update no whatsapp (penduduk)
@@ -134,16 +133,14 @@ class ManagenemtFamilyController extends Controller
             return $anggotaKeluarga->with(["alamat", "penduduk"])->find($anggotaKeluarga->nik);
         });
 
-        return $this->responseSuccess($result);
+        return Response::success($result);
     }
 
     public function destroy(KK $kk, AnggotaKeluarga $anggotaKeluarga)
     {
         // validasi jika yang dihapus adalah nik kepala keluarga
         if ($kk->nik_kepala_keluarga === $anggotaKeluarga->nik) {
-            return response()->json(
-                Api::fail("Tidak dapat menghapus kepala keluarga, silakan ganti kepala keluarga terlebih dahulu.")
-            );
+            return Response::message("Tidak dapat menghapus kepala keluarga, silakan ganti kepala keluarga terlebih dahulu.", 400);
         }
 
         $result = DB::transaction(function () use ($kk, $anggotaKeluarga) {
@@ -153,17 +150,16 @@ class ManagenemtFamilyController extends Controller
             return $anggotaKeluarga->delete();
         });
 
-        return $this->responseSuccess($result);
+        return $result ? Response::message("Berhasil Menghapus Data Keluarga.") : Response::message("Gagal Menghapus");
     }
 
     public function imageKK(Request $request)
     {
-        $validationResult = $this->checkValidator(Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             "token_access"  => "required|string",
             "image_name"    => "required|string"
-        ]));
-
-        if ($validationResult !== true) return $validationResult;
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
 
         return response()->download("penduduk/kk/{$request->image_name}");
     }

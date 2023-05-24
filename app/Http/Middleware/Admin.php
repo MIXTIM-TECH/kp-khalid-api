@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Res\Api;
+use App\Http\Res\Response;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -18,8 +18,10 @@ class Admin
     public function handle(Request $request, Closure $next)
     {
         $role = $request->user->role;
-        if ($role !== "admin" && $role !== "super_admin")
-            return response()->json(Api::fail("Only admin can access"), 403);
+        if ($role !== "admin" && $role !== "super_admin") {
+            return Response::message("Hanya Admin yang Dapat Mengakses", 403);
+        }
+
         return $next($request);
     }
 }
