@@ -3,7 +3,7 @@
 namespace App\Exceptions;
 
 use Throwable;
-use App\Http\Res\Api;
+use App\Http\Res\Response;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -40,7 +40,7 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(function (Throwable $e) {
-            return response()->json(Api::fail($e->getMessage()), 500);
+            return response()->json(Response::message($e->getMessage()), 500);
         });
     }
 }
