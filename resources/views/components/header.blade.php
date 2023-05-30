@@ -21,10 +21,12 @@
                         </li>
                     </ul>
                     <div class="d-flex">
-                        <button class="btn btn-outline-primary" type="submit">Log in</button>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                            data-bs-target="#login-form">
+                            Log In
+                        </button>
                     </div>
                 </div>
             </div>
         </nav>
     </header>
-

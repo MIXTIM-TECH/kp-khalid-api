@@ -128,10 +128,10 @@
     </div>
 
     {{-- form login --}}
-    {{-- @include('pages.components.login-form') --}}
+    @include('pages.components.login-form')
 
     {{-- form register --}}
-    {{-- @include('pages.components.register-form') --}}
+    @include('pages.components.register-form')
 
     {{-- footer --}}
     @include('components.footer')
