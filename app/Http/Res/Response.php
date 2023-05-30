@@ -6,7 +6,7 @@ use Illuminate\Validation\Validator;
 
 class Response
 {
-    public static function success(array $data, $status = 200)
+    public static function success($data, $status = 200)
     {
         return response()->json($data, $status);
     }
