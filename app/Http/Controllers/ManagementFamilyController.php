@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class ManagenemtFamilyController extends Controller
+class ManagementFamilyController extends Controller
 {
     private $rules;
 
@@ -21,18 +21,15 @@ class ManagenemtFamilyController extends Controller
         $this->rules = require_once(app_path("Http/Req/ValidationRules.php"));
     }
 
-    public function index(KK $kk)
+    public function index(Request $request)
     {
-        $dataKeluarga = $kk->with("anggotaKeluarga")->find($kk->no_kk);
-        return Response::success($dataKeluarga->toArray());
+        $dataKeluarga = AnggotaKeluarga::where("no_kk", $request->kk);
+        return Response::success($dataKeluarga->get()->toArray());
     }
 
-    public function show(KK $kk, AnggotaKeluarga $anggotaKeluarga)
+    public function show(AnggotaKeluarga $anggotaKeluarga)
     {
-        return Response::success([
-            "kk"                => $kk,
-            "detail_keluarga"   => $anggotaKeluarga->with(["alamat", "penduduk"])->find($anggotaKeluarga->nik)
-        ]);
+        return Response::success($anggotaKeluarga);
     }
 
     public function create(KK $kk, Request $request)

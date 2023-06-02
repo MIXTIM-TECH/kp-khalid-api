@@ -31,28 +31,31 @@ class CredentialController extends Controller
         return Response::message("Pendaftar Ditolak", 200);
     }
 
-    public function pendaftar()
+    public function pendaftar(Request $request)
     {
-        $dataPendaftar = Credential::with("penduduk")->whereHas("waktuAktivasi", function (Builder $query) {
+        $dataPendaftar = Credential::with("user")->whereHas("waktuAktivasi", function (Builder $query) {
             $query->where("batas_aktivasi", ">", $this->time);
-        })->where("status", "tidak_aktif")->get();
+        })->where("status", "tidak_aktif");
+        $dataPendaftar = (new Filters($dataPendaftar, $request))->search("username")->beforeDate()->afterDate()->result();
 
-        return Response::success($dataPendaftar->toArray());
+        return Response::success($dataPendaftar->get()->toArray());
     }
 
-    public function pendaftarKadaluarsa()
+    public function pendaftarKadaluarsa(Request $request)
     {
-        $dataPendaftarKadaluarsa = Credential::with("penduduk")->whereHas("waktuAktivasi", function (Builder $query) {
+        $dataPendaftarKadaluarsa = Credential::with("user")->whereHas("waktuAktivasi", function (Builder $query) {
             $query->where("batas_aktivasi", "<", $this->time);
-        })->where("status", "tidak_aktif")->get();
+        })->where("status", "tidak_aktif");
+        $dataPendaftarKadaluarsa = (new Filters($dataPendaftarKadaluarsa, $request))->search("username")->afterDate()->beforeDate()->result();
 
-        return Response::success($dataPendaftarKadaluarsa->toArray());
+        return Response::success($dataPendaftarKadaluarsa->get()->toArray());
     }
 
-    public function pendaftarDitolak()
+    public function pendaftarDitolak(Request $request)
     {
-        $dataPendaftarDitolak = Credential::with("penduduk")->where("status", "ditolak")->get();
-        return Response::success($dataPendaftarDitolak->toArray());
+        $dataPendaftarDitolak = Credential::with("user")->where("status", "ditolak");
+        $dataPendaftarDitolak = (new Filters($dataPendaftarDitolak, $request))->search("username")->afterDate()->beforeDate()->result();
+        return Response::success($dataPendaftarDitolak->get()->toArray());
     }
 
     public function admin()

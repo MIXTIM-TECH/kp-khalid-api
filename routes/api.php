@@ -3,7 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CredentialController;
 use App\Http\Controllers\KKController;
-use App\Http\Controllers\ManagenemtFamilyController;
+use App\Http\Controllers\ManagementFamilyController;
 use App\Http\Middleware\Admin;
 use App\Http\Middleware\Auth;
 use App\Http\Middleware\Patriach;
@@ -45,9 +45,9 @@ Route::middleware(Auth::class)->group(function () {
     });
 
     // TODO: User
-    Route::controller(ManagenemtFamilyController::class)->middleware(Patriach::class)->group(function () {
-        Route::get("/anggota-keluarga/{kk}", "index");
-        Route::get("/anggota-keluarga/{kk}/{anggotaKeluarga}", "show");
+    Route::controller(ManagementFamilyController::class)->group(function () {
+        Route::get("/anggota-keluarga", "index");
+        Route::get("/anggota-keluarga/{anggotaKeluarga}", "show");
         Route::post("/anggota-keluarga/{kk}", "create");
         Route::put("/anggota-keluarga/{kk}/{anggotaKeluarga}", "update");
         Route::delete("/anggota-keluarga/{kk}/{anggotaKeluarga}", "destroy");
@@ -56,7 +56,7 @@ Route::middleware(Auth::class)->group(function () {
 
 
 // TODO: Get KK Image
-Route::get("/kk/image", [ManagenemtFamilyController::class  => "imageKK"]);
+Route::get("/kk/image", [ManagementFamilyController::class  => "imageKK"]);
 
 
 // TODO: Public
