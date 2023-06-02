@@ -21,18 +21,33 @@ class ManagementFamilyController extends Controller
         $this->rules = require_once(app_path("Http/Req/ValidationRules.php"));
     }
 
+    public function isPatriach(Request $request)
+    {
+        if (!$request->no_kk) return false;
+
+        $kk = KK::find($request->no_kk);
+        if ($request->user->role !== "user") return true;
+        if ($kk->nik_kepala_keluarga === $request->user->username) return true;
+
+        return false;
+    }
+
     public function index(Request $request)
     {
-        $dataKeluarga = AnggotaKeluarga::where("no_kk", $request->kk);
+        if (!$this->isPatriach($request)) return Response::message("Akses Ditolak", 403);
+
+        $dataKeluarga = AnggotaKeluarga::where("no_kk", $request->no_kk);
         return Response::success($dataKeluarga->get()->toArray());
     }
 
-    public function show(AnggotaKeluarga $anggotaKeluarga)
+    public function show(AnggotaKeluarga $anggotaKeluarga, Request $request)
     {
+        if (!$this->isPatriach($request)) return Response::message("Akses Ditolak", 403);
+
         return Response::success($anggotaKeluarga);
     }
 
-    public function create(KK $kk, Request $request)
+    public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
             "nama"          => "required|string",
@@ -40,8 +55,9 @@ class ManagementFamilyController extends Controller
             "no_whatsapp"   => "max:20"
         ]);
         if ($validator->fails()) return Response::errors($validator);
+        if (!$this->isPatriach($request)) return Response::message("Akses Ditolak", 403);
 
-        $result = DB::transaction(function () use ($kk, $request) {
+        $result = DB::transaction(function () use ($request) {
             // tambah alamat
             $alamat = new Alamat;
             $alamat->type = "anggota_keluarga";
@@ -52,10 +68,11 @@ class ManagementFamilyController extends Controller
             $anggotaKeluarga->id_detail_alamat = $alamat->id;
             $anggotaKeluarga->nama = $request->nama;
             $anggotaKeluarga->nik = $request->nik;
-            $anggotaKeluarga->no_kk = $kk->no_kk;
+            $anggotaKeluarga->no_kk = $request->no_kk;
             $anggotaKeluarga->save();
 
             // update jumlah keluarga (table kk)
+            $kk = KK::find($request->no_kk);
             $kk->jumlah_keluarga += 1;
             $kk->save();
 
@@ -72,7 +89,7 @@ class ManagementFamilyController extends Controller
         return Response::success($result);
     }
 
-    public function update(KK $kk, AnggotaKeluarga $anggotaKeluarga, Request $request)
+    public function update(AnggotaKeluarga $anggotaKeluarga, Request $request)
     {
         $validator = Validator::make($request->all(), [
             "no_whatsapp"       => "max:20",
@@ -92,8 +109,10 @@ class ManagementFamilyController extends Controller
             "kecamatan"         => "string|max:255",
             "kabupaten"         => "string|max:255",
             "provinsi"          => "string|max:255",
+            "no_kk"             => "required|exists:kk,no_kk"
         ]);
         if ($validator->fails()) return Response::errors($validator);
+        if (!$this->isPatriach($request)) return Response::message("Akses Ditolak", 403);
 
         $result = DB::transaction(function () use ($anggotaKeluarga, $request) {
             // update no whatsapp (penduduk)
@@ -133,9 +152,12 @@ class ManagementFamilyController extends Controller
         return Response::success($result);
     }
 
-    public function destroy(KK $kk, AnggotaKeluarga $anggotaKeluarga)
+    public function destroy(AnggotaKeluarga $anggotaKeluarga, Request $request)
     {
+        if (!$this->isPatriach($request)) return Response::message("Akses Ditolak", 403);
+
         // validasi jika yang dihapus adalah nik kepala keluarga
+        $kk = KK::find($request->no_kk);
         if ($kk->nik_kepala_keluarga === $anggotaKeluarga->nik) {
             return Response::message("Tidak dapat menghapus kepala keluarga, silakan ganti kepala keluarga terlebih dahulu.", 400);
         }
@@ -147,7 +169,7 @@ class ManagementFamilyController extends Controller
             return $anggotaKeluarga->delete();
         });
 
-        return $result ? Response::message("Berhasil Menghapus Data Keluarga.") : Response::message("Gagal Menghapus");
+        return $result ? Response::message("Berhasil Menghapus Data Keluarga.", 200) : Response::message("Gagal Menghapus", 200);
     }
 
     public function imageKK(Request $request)

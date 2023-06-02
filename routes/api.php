@@ -6,7 +6,6 @@ use App\Http\Controllers\KKController;
 use App\Http\Controllers\ManagementFamilyController;
 use App\Http\Middleware\Admin;
 use App\Http\Middleware\Auth;
-use App\Http\Middleware\Patriach;
 use App\Http\Middleware\SuperAdmin;
 use Illuminate\Support\Facades\Route;
 
@@ -48,7 +47,7 @@ Route::middleware(Auth::class)->group(function () {
     Route::controller(ManagementFamilyController::class)->group(function () {
         Route::get("/anggota-keluarga", "index");
         Route::get("/anggota-keluarga/{anggotaKeluarga}", "show");
-        Route::post("/anggota-keluarga/{kk}", "create");
+        Route::post("/anggota-keluarga", "create");
         Route::put("/anggota-keluarga/{kk}/{anggotaKeluarga}", "update");
         Route::delete("/anggota-keluarga/{kk}/{anggotaKeluarga}", "destroy");
     });
