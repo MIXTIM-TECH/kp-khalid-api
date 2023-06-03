@@ -15,6 +15,7 @@ class LetterController extends Controller
         ]);
         if ($validator->fails()) return Response::errors($validator);
 
-        return app()->call("\App\Http\Controllers\Letters\{$request->letter_type}Controller@create");
+        $controller = $request->letter_type . "Controller";
+        return app()->call("\App\Http\Controllers\Letters\\" . $controller . "@create");
     }
 }
