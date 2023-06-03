@@ -22,6 +22,6 @@ class KK extends Model
 
     public function kepalaKeluarga()
     {
-        return $this->hasOne(AnggotaKeluarga::class, "nik", "nik_kepala_keluarga");
+        return $this->hasOne(AnggotaKeluarga::class, "nik", "nik_kepala_keluarga")->join("penduduk", "penduduk.no_kk", "=", "anggota_keluarga.no_kk");
     }
 }
