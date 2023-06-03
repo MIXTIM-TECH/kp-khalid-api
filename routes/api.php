@@ -49,7 +49,7 @@ Route::middleware(Auth::class)->group(function () {
         Route::get("/anggota-keluarga/{anggotaKeluarga}", "show");
         Route::post("/anggota-keluarga", "create");
         Route::put("/anggota-keluarga/{kk}/{anggotaKeluarga}", "update");
-        Route::delete("/anggota-keluarga/{kk}/{anggotaKeluarga}", "destroy");
+        Route::delete("/anggota-keluarga/{anggotaKeluarga}", "destroy");
     });
 });
 
