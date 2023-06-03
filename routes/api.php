@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CredentialController;
+use App\Http\Controllers\InfoSuratController;
 use App\Http\Controllers\KKController;
 use App\Http\Controllers\ManagementFamilyController;
 use App\Http\Middleware\Admin;
@@ -45,10 +46,19 @@ Route::middleware(Auth::class)->group(function () {
         });
     });
 
+    // Todo: Admin & User
+    Route::controller(KKController::class)->middleware(Patriach::class)->group(function () {
+        Route::get("/data-keluarga/{kk}", "show");
+    });
+
+    Route::controller(InfoSuratController::class)->group(function () {
+        Route::get("/info-surat", "index");
+    });
+
     // TODO: User
     Route::controller(ManagementFamilyController::class)->middleware(Patriach::class)->group(function () {
         Route::get("/anggota-keluarga", "index");
-        Route::get("/anggota-keluarga/{anggotaKeluarga}", "show");
+        Route::get("/anggota-keluarga/{nik}", "show");
         Route::post("/anggota-keluarga", "create");
         Route::put("/anggota-keluarga/{kk}/{anggotaKeluarga}", "update");
         Route::delete("/anggota-keluarga/{anggotaKeluarga}", "destroy");
