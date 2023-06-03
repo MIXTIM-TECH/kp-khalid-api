@@ -13,11 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create("kk", function (Blueprint $table) {
-            $table->string("no_kk", 16)->primary();
-            $table->string("foto_kk"); // file_name
-            $table->integer("jumlah_keluarga")->unsigned()->default(1);
-            $table->integer("jumlah_surat_diajukan")->unsigned()->default(0);
+        Schema::create("info_surat", function (Blueprint $table) {
+            $table->id();
+            $table->enum("jenis_surat", ["Skck", "Sktm", "PengantarPernikahan", "Domisili", "BelumMenikah", "KeteranganUsaha"]);
+            $table->integer("jumlah_surat")->unsigned()->default(0);
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("kk");
+        Schema::dropIfExists("info_surat");
     }
 };

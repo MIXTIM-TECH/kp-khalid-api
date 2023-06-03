@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CredentialController;
+use App\Http\Controllers\InfoSuratController;
 use App\Http\Controllers\KKController;
 use App\Http\Controllers\ManagementFamilyController;
 use App\Http\Middleware\Admin;
@@ -43,6 +44,15 @@ Route::middleware(Auth::class)->group(function () {
             Route::get("/data-keluarga", "index");
             Route::get("/data-keluarga/{kk}", "show");
         });
+    });
+
+    // Todo: Admin & User
+    Route::controller(KKController::class)->middleware(Patriach::class)->group(function () {
+        Route::get("/data-keluarga/{kk}", "show");
+    });
+
+    Route::controller(InfoSuratController::class)->group(function () {
+        Route::get("/info-surat", "index");
     });
 
     // TODO: User
