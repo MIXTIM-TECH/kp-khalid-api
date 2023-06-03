@@ -6,6 +6,7 @@ use App\Http\Controllers\KKController;
 use App\Http\Controllers\ManagementFamilyController;
 use App\Http\Middleware\Admin;
 use App\Http\Middleware\Auth;
+use App\Http\Middleware\Patriach;
 use App\Http\Middleware\SuperAdmin;
 use Illuminate\Support\Facades\Route;
 
@@ -40,11 +41,12 @@ Route::middleware(Auth::class)->group(function () {
 
         Route::controller(KKController::class)->group(function () {
             Route::get("/data-keluarga", "index");
+            Route::get("/data-keluarga/{kk}", "show");
         });
     });
 
     // TODO: User
-    Route::controller(ManagementFamilyController::class)->group(function () {
+    Route::controller(ManagementFamilyController::class)->middleware(Patriach::class)->group(function () {
         Route::get("/anggota-keluarga", "index");
         Route::get("/anggota-keluarga/{anggotaKeluarga}", "show");
         Route::post("/anggota-keluarga", "create");

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Res\Response;
 use App\Models\Credential;
+use App\Models\KK;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -125,5 +126,18 @@ class CredentialController extends Controller
         $userCredential->save();
 
         return Response::success($userCredential);
+    }
+
+    public function deleteAccount(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "no_kk"     => "required|exists:kk,no_kk"
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        $kk = KK::find($request->no_kk);
+        if ($request->user->role === "user") {
+            // 
+        }
     }
 }
