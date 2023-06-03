@@ -101,7 +101,7 @@ class AuthController extends Controller
         if ($validator->fails()) return Response::errors($validator);
 
         // upload foto kk
-        $fileName = $request->file("foto_kk")->store("kk", "penduduk");
+        $fileName = "penduduk/" . $request->file("foto_kk")->store("kk", "penduduk");
 
         $user = DB::transaction(function () use ($request, $fileName) {
             $alamat = new Alamat;
