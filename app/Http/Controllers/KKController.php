@@ -14,4 +14,9 @@ class KKController extends Controller
         $dataKK = (new Filters($dataKK, $request))->search("kk.no_kk")->beforeDate()->afterDate()->result();
         return Response::success($dataKK->get()->toArray());
     }
+
+    public function show($noKK)
+    {
+        return Response::success(KK::with(["anggotaKeluarga", "kepalaKeluarga"])->find($noKK));
+    }
 }
