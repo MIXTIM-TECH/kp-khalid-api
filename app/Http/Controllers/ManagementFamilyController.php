@@ -23,18 +23,20 @@ class ManagementFamilyController extends Controller
 
     public function isPatriach(Request $request)
     {
-        if (!$request->no_kk) return false;
+        if (!$request->no_kk) return "Nomor KK harus diisi!";
 
         $kk = KK::find($request->no_kk);
+        if (!$kk) return "KK tidak terdaftar!";
         if ($request->user->role !== "user") return true;
         if ($kk->nik_kepala_keluarga === $request->user->username) return true;
 
-        return false;
+        return "Akses Ditolak!";
     }
 
     public function index(Request $request)
     {
-        if (!$this->isPatriach($request)) return Response::message("Akses Ditolak", 403);
+        $isPatriach = $this->isPatriach($request);
+        if ($isPatriach !== true) return Response::message($isPatriach, 403);
 
         $dataKeluarga = AnggotaKeluarga::where("no_kk", $request->no_kk);
         return Response::success($dataKeluarga->get()->toArray());
@@ -55,7 +57,8 @@ class ManagementFamilyController extends Controller
             "no_whatsapp"   => "max:20"
         ]);
         if ($validator->fails()) return Response::errors($validator);
-        if (!$this->isPatriach($request)) return Response::message("Akses Ditolak", 403);
+        $isPatriach = $this->isPatriach($request);
+        if ($isPatriach !== true) return Response::message($isPatriach, 403);
 
         $result = DB::transaction(function () use ($request) {
             // tambah alamat
@@ -111,8 +114,8 @@ class ManagementFamilyController extends Controller
             "provinsi"          => "string|max:255",
             "no_kk"             => "required|exists:kk,no_kk"
         ]);
-        if ($validator->fails()) return Response::errors($validator);
-        if (!$this->isPatriach($request)) return Response::message("Akses Ditolak", 403);
+        $isPatriach = $this->isPatriach($request);
+        if ($isPatriach !== true) return Response::message($isPatriach, 403);
 
         $result = DB::transaction(function () use ($anggotaKeluarga, $request) {
             // update no whatsapp (penduduk)
@@ -154,7 +157,8 @@ class ManagementFamilyController extends Controller
 
     public function destroy(AnggotaKeluarga $anggotaKeluarga, Request $request)
     {
-        if (!$this->isPatriach($request)) return Response::message("Akses Ditolak", 403);
+        $isPatriach = $this->isPatriach($request);
+        if ($isPatriach !== true) return Response::message($isPatriach, 403);
 
         // validasi jika yang dihapus adalah nik kepala keluarga
         $kk = KK::find($request->no_kk);
