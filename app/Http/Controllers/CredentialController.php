@@ -86,7 +86,7 @@ class CredentialController extends Controller
 
     public function destroyAdmin(Credential $admin)
     {
-        return $admin->delete() ? Response::message("Admin Berhasil Dihapus") : Response::message("Gagal Menghapus");
+        return $admin->delete() ? Response::message("Admin Berhasil Dihapus", 200) : Response::message("Gagal Menghapus");
     }
 
     public function updateProfile(Request $request)
