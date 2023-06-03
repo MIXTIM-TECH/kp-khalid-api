@@ -25,8 +25,6 @@ class Patriach
         if ($validator->fails()) return Response::errors($validator);
 
         $kk = KK::find($request->no_kk);
-        $request->kk = $kk;
-
         if ($request->user->role !== "user") return $next($request);
         if ($kk->nik_kepala_keluarga !== $request->user->username) return Response::message("Akses Ditolak", 403);
 

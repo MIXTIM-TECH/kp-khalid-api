@@ -23,13 +23,13 @@ class ManagementFamilyController extends Controller
 
     public function index(Request $request)
     {
-        $dataKeluarga = AnggotaKeluarga::where("no_kk", $request->no_kk);
-        return Response::success($dataKeluarga->get()->toArray());
+        $dataKeluarga = AnggotaKeluarga::where("no_kk", $request->no_kk)->get()->toArray();
+        return Response::success($dataKeluarga);
     }
 
-    public function show(AnggotaKeluarga $anggotaKeluarga, Request $request)
+    public function show($nik, Request $request)
     {
-        return Response::success($anggotaKeluarga);
+        return Response::success(AnggotaKeluarga::where("no_kk", $request->no_kk)->find($nik));
     }
 
     public function create(Request $request)
