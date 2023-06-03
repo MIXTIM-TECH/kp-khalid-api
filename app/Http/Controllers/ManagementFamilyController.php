@@ -93,9 +93,14 @@ class ManagementFamilyController extends Controller
             "kecamatan"         => "string|max:255",
             "kabupaten"         => "string|max:255",
             "provinsi"          => "string|max:255",
-            "no_kk"             => "required|exists:kk,no_kk"
+            "no_kk"             => "required|exists:kk,no_kk",
+            "nik"               => "string|max:16"
         ]);
         if ($validator->fails()) return Response::errors($validator);
+
+        if ($request->nik && $request->nik !== $anggotaKeluarga->nik && AnggotaKeluarga::find($request->nik)) {
+            return Response::message("Nik Sudah Terdaftar!", 400);
+        }
 
         $result = DB::transaction(function () use ($anggotaKeluarga, $request) {
             // update no whatsapp (penduduk)
@@ -127,6 +132,7 @@ class ManagementFamilyController extends Controller
             $anggotaKeluarga->jenis_pekerjaan = $request->jenis_pekerjaan;
             $anggotaKeluarga->agama = $request->agama;
             $anggotaKeluarga->status_perkawinan = $request->status_perkawinan;
+            if ($request->nik) $anggotaKeluarga->nik = $request->nik;
             $anggotaKeluarga->save();
 
             return $anggotaKeluarga->with(["alamat", "penduduk"])->find($anggotaKeluarga->nik);

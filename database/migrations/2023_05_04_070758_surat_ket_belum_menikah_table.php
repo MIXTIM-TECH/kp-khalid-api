@@ -15,8 +15,11 @@ return new class extends Migration
     {
         Schema::create("surat_ket_belum_menikah", function (Blueprint $table) {
             $table->id();
+            $table->string("pemohon", 16)->nullable();
+            $table->foreign("pemohon")->references("nik")->on("anggota_keluarga")->cascadeOnUpdate()->nullOnDelete();
             $table->string("surat_pengantar"); // file_name
             $table->text("keperluan");
+            $table->text("keterangan");
             $table->timestamps();
         });
     }

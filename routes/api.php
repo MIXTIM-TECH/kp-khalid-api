@@ -56,7 +56,7 @@ Route::middleware(Auth::class)->group(function () {
         Route::get("/anggota-keluarga", "index");
         Route::get("/anggota-keluarga/{nik}", "show");
         Route::post("/anggota-keluarga", "create");
-        Route::put("/anggota-keluarga/{kk}/{anggotaKeluarga}", "update");
+        Route::put("/anggota-keluarga/{anggotaKeluarga}", "update");
         Route::delete("/anggota-keluarga/{anggotaKeluarga}", "destroy");
     });
 
