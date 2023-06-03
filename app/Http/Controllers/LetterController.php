@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Res\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class LetterController extends Controller
 {
