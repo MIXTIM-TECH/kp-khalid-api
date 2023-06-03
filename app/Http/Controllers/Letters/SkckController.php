@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Letters;
 
 use App\Http\Controllers\Controller;
 use App\Http\Res\Response;
+use App\Models\AnggotaKeluarga;
 use App\Models\InfoSurat;
+use App\Models\KK;
 use App\Models\Skck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +22,8 @@ class SkckController extends Controller
                 "required",
                 File::types(["pdf"])->max(2048)
             ],
-            "keperluan"         => "required|string"
+            "keperluan"         => "required|string",
+            "keterangan"        => "required|string"
         ]);
         if ($validator->fails()) return Response::errors($validator);
 
@@ -36,6 +39,10 @@ class SkckController extends Controller
             $infoSurat = InfoSurat::where("jenis_surat", "Skck")->first();
             $infoSurat->jumlah_surat += 1;
             $infoSurat->save();
+
+            $pemohon = AnggotaKeluarga::find($request->nik);
+            $kk = KK::find($pemohon->no_kk);
+            $kk->jumlah_surat_diajukan += 1;
 
             return $letter;
         });

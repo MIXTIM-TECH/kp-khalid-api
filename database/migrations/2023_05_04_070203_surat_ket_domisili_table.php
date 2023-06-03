@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string("surat_pengantar"); // filename
             $table->text("keperluan");
+            $table->string("pemohon", 16)->nullable();
+            $table->foreign("pemohon")->references("nik")->on("anggota_keluarga")->cascadeOnUpdate()->nullOnDelete();
             $table->timestamps();
         });
     }
