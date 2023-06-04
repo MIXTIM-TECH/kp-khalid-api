@@ -20,7 +20,7 @@ class LetterController extends Controller
         $pemohon = AnggotaKeluarga::find($request->nik)->toArray();
         $isDataIssetNull = array_search(null, $pemohon);
         if ($isDataIssetNull) return Response::success(["redirect" => [
-            "path"      => "anggota-keluarga/{nik}",
+            "path"      => "anggota-keluarga/{$request->nik}",
             "method"    => "PUT",
             "message"   => "Harap lengkapi data anda terlebih dahulu",
             "pemohon"   => $pemohon

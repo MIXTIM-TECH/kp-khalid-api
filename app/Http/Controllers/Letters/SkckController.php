@@ -7,7 +7,7 @@ use App\Http\Res\Response;
 use App\Models\AnggotaKeluarga;
 use App\Models\InfoSurat;
 use App\Models\KK;
-use App\Models\Skck;
+use App\Models\Letters\Skck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -23,7 +23,10 @@ class SkckController extends Controller
                 File::types(["pdf"])->max(2048)
             ],
             "keperluan"         => "required|string",
-            "keterangan"        => "required|string"
+            "nama_ayah"        => "required|string",
+            "nama_ibu"        => "required|string",
+            "agama"        => "required|string",
+            "alamat"        => "required|string"
         ]);
         if ($validator->fails()) return Response::errors($validator);
 
@@ -34,6 +37,7 @@ class SkckController extends Controller
             $letter->pemohon = $request->nik;
             $letter->keperluan = $request->keperluan;
             $letter->surat_pengantar = $surat_pengantar;
+            $letter->keterangan = $request->keterangan;
             $letter->save();
 
             $infoSurat = InfoSurat::where("jenis_surat", "Skck")->first();
