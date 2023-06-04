@@ -16,12 +16,30 @@ class InfoSurat extends Seeder
     public function run()
     {
         DB::table("info_surat")->insert([
-            ["jenis_surat" => "Skck"],
-            ["jenis_surat" => "Sktm"],
-            ["jenis_surat" => "PengantarPernikahan"],
-            ["jenis_surat" => "Domisili"],
-            ["jenis_surat" => "BelumMenikah"],
-            ["jenis_surat" => "KeteranganUsaha"]
+            [
+                "jenis_surat"   => "Skck",
+                "nama"          => "Surat Keterangan Catatan Kriminal"
+            ],
+            [
+                "jenis_surat"   => "Sktm",
+                "nama"          => "Surat Keterangan Tidak Mampu"
+            ],
+            [
+                "jenis_surat"   => "PengantarPernikahan",
+                "nama"          => "Surat Pengantar Pernikahan"
+            ],
+            [
+                "jenis_surat"   => "Domisili",
+                "nama"          => "Surat Keterangan Domisili"
+            ],
+            [
+                "jenis_surat"   => "BelumMenikah",
+                "nama"          => "Surat Keterangan Belum Menikah"
+            ],
+            [
+                "jenis_surat"   => "KeteranganUsaha",
+                "nama"          => "Surat Keterangan Usaha"
+            ]
         ]);
     }
 }

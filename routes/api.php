@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CredentialController;
 use App\Http\Controllers\InfoSuratController;
@@ -69,7 +70,7 @@ Route::middleware(Auth::class)->group(function () {
 
 
 // TODO: Get KK Image
-Route::get("/kk/image", [ManagementFamilyController::class  => "imageKK"]);
+Route::get("/asset", [AssetController::class, "show"]);
 
 
 // TODO: Public

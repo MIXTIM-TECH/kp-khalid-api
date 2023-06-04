@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create("info_surat", function (Blueprint $table) {
             $table->id();
             $table->enum("jenis_surat", ["Skck", "Sktm", "PengantarPernikahan", "Domisili", "BelumMenikah", "KeteranganUsaha"]);
+            $table->string("nama");
             $table->integer("jumlah_surat")->unsigned()->default(0);
             $table->timestamps();
         });
