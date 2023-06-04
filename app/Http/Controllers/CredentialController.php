@@ -59,10 +59,11 @@ class CredentialController extends Controller
         return Response::success($dataPendaftarDitolak->get()->toArray());
     }
 
-    public function admin()
+    public function admin(Request $request)
     {
-        $dataAdmin = Credential::where("role", "admin")->get();
-        return Response::success($dataAdmin);
+        $dataAdmin = Credential::where("role", "admin");
+        $dataAdmin = (new Filters($dataAdmin, $request))->search("username")->result();
+        return Response::success($dataAdmin->get());
     }
 
     public function createAdmin(Request $request)
@@ -137,7 +138,7 @@ class CredentialController extends Controller
 
         $kk = KK::find($request->no_kk);
         if ($request->user->role === "user") {
-            // 
+            //
         }
     }
 }
