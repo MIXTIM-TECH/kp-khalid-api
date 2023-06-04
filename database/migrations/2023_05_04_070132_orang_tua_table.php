@@ -16,13 +16,15 @@ return new class extends Migration
         Schema::create("orang_tua", function (Blueprint $table) {
             $table->id();
             $table->string("nama_lengkap");
-            $table->enum("agama", ["Islam", "Kristen Protestan", "Katolik", "Hindu", "Buddha", "Kong Hu Cu",]);
+            $table->enum("agama", ["Islam", "Kristen Protestan", "Katolik", "Hindu", "Buddha", "Kong Hu Cu"]);
             $table->text("alamat");
+            $table->enum("jenis_kelamin", ["P", "L"])->nullable();
+            $table->string("status_perkawinan")->nullable();
+            $table->string("pendidikan")->nullable();
             $table->string("nik", 16)->nullable();
             $table->string("tempat_lahir")->nullable();
             $table->string("tanggal_lahir")->nullable();
             $table->string("pekerjaan")->nullable();
-            $table->enum("kategori", ["ayah", "ibu"])->nullable();
             $table->timestamps();
         });
     }

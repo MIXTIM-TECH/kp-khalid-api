@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Res\Response;
+use App\Models\Alamat;
 use App\Models\AnggotaKeluarga;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -17,9 +18,10 @@ class LetterController extends Controller
         ]);
         if ($validator->fails()) return Response::errors($validator);
 
-        $pemohon = AnggotaKeluarga::find($request->nik)->toArray();
-        $isDataIssetNull = array_search(null, $pemohon);
-        if ($isDataIssetNull) return Response::success(["redirect" => [
+        $pemohon = AnggotaKeluarga::with("alamat")->find($request->nik);
+        $isDataIssetNull = array_search(null, (array) $pemohon);
+        $isAlamatIssetNull = array_search(null, (array) $pemohon->alamat);
+        if ($isDataIssetNull || $isAlamatIssetNull) return Response::success(["redirect" => [
             "path"      => "anggota-keluarga/{$request->nik}",
             "method"    => "PUT",
             "message"   => "Harap lengkapi data anda terlebih dahulu",

@@ -16,14 +16,13 @@ return new class extends Migration
         Schema::create("wali", function (Blueprint $table) {
             $table->id();
             $table->string("nama");
-            $table->string("pendidikan");
-            $table->string("nik", 16);
-            $table->string("pekerjaan");
-            $table->enum("status_perkawinan", ["kawin", "belum_kawin", "cerai_hidup", "cerai_mati"]);
-            $table->text("alamat");
             $table->enum("jenis_kelamin", ["P", "L"]);
             $table->string("tempat_lahir");
             $table->date("tanggal_lahir");
+            $table->string("pekerjaan");
+            $table->string("pendidikan");
+            $table->string("nik", 16);
+            $table->text("alamat");
             $table->timestamps();
         });
     }

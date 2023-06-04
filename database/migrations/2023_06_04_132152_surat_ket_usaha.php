@@ -13,15 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create("surat_ket_tidak_mampu", function (Blueprint $table) {
+        Schema::create("surat_ket_usaha", function (Blueprint $table) {
             $table->id();
-            $table->foreignId("id_orang_tua")->constrained("orang_tua");
             $table->string("pemohon", 16)->nullable();
             $table->foreign("pemohon")->references("nik")->on("anggota_keluarga")->cascadeOnUpdate()->nullOnDelete();
-            $table->string("surat_pengantar");
+            $table->string("nama_usaha");
             $table->text("keperluan");
-            $table->text("keterangan");
-            $table->string("pendidikan");
+            $table->text("alamat_usaha");
             $table->timestamps();
         });
     }
@@ -33,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists("surat_ket_tidak_mampu");
+        Schema::dropIfExists("surat_ket_usaha");
     }
 };

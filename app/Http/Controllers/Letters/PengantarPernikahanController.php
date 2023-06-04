@@ -7,5 +7,5 @@ use Illuminate\Http\Request;
 
 class PengantarPernikahanController extends Controller
 {
-    //
+    // 
 }

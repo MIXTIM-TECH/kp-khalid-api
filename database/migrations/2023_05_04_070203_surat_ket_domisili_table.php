@@ -15,10 +15,12 @@ return new class extends Migration
     {
         Schema::create("surat_ket_domisili", function (Blueprint $table) {
             $table->id();
-            $table->string("surat_pengantar"); // filename
-            $table->text("keperluan");
             $table->string("pemohon", 16)->nullable();
             $table->foreign("pemohon")->references("nik")->on("anggota_keluarga")->cascadeOnUpdate()->nullOnDelete();
+            $table->string("surat_pengantar"); // filename
+            $table->text("keperluan");
+            $table->text("keterangan");
+            $table->text("pendidikan");
             $table->timestamps();
         });
     }

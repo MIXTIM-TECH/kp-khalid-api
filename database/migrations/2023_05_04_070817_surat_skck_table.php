@@ -20,10 +20,8 @@ return new class extends Migration
             $table->string("surat_pengantar"); // file_name
             $table->text("keperluan");
             $table->text("keterangan");
-            $table->string("nama_ayah");
-            $table->string("nama_ibu");
-            $table->string("agama");
-            $table->text("alamat");
+            $table->foreignId("id_ayah")->constrained("orang_tua");
+            $table->foreignId("id_ibu")->constrained("orang_tua");
             $table->timestamps();
         });
     }
