@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Res\Response;
+use App\Models\Credential;
 use App\Models\KK;
 use Illuminate\Http\Request;
 
@@ -18,5 +19,13 @@ class KKController extends Controller
     public function show($noKK)
     {
         return Response::success(KK::with(["anggotaKeluarga", "kepalaKeluarga"])->find($noKK));
+    }
+
+    public function destroy(KK $kk)
+    {
+        $credential = Credential::find($kk->nik_kepala_keluarga);
+        $credential->delete();
+
+        return $kk->delete() ? Response::message("Berhasil menghapus akun!", 200) : Response::message("Gagal menghapus akun!");
     }
 }
