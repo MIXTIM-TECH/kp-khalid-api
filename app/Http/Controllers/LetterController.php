@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Res\Response;
-use App\Models\Alamat;
 use App\Models\AnggotaKeluarga;
+use App\Models\InfoSurat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class LetterController extends Controller
 {
+    public function index()
+    {
+        return Response::success(InfoSurat::all());
+    }
+
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
