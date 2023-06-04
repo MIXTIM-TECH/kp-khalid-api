@@ -44,6 +44,7 @@ Route::middleware(Auth::class)->group(function () {
         Route::controller(KKController::class)->group(function () {
             Route::get("/data-keluarga", "index");
             Route::get("/data-keluarga/{kk}", "show");
+            Route::delete("/data-keluarga/{kk}", "destroy");
         });
     });
 
