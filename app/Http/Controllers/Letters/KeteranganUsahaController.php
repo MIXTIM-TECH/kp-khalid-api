@@ -19,7 +19,7 @@ class KeteranganUsahaController extends Controller
         $validator = Validator::make($request->all(), [
             "keperluan"        => "required|string",
             "nama_usaha"        => "required|string",
-            "alamat_usaha"      => "requried|string"
+            "alamat_usaha"      => "required|string"
         ]);
         if ($validator->fails()) return Response::errors($validator);
 
@@ -30,7 +30,7 @@ class KeteranganUsahaController extends Controller
 
             $letter = new KeteranganUsaha;
             $letter->pemohon = $request->nik;
-            $letter->keterangan = $keperluan;
+            $letter->keperluan = $keperluan;
             $letter->nama_usaha = $nama_usaha;
             $letter->alamat_usaha = $alamat_usaha;
             $letter->save();
@@ -42,6 +42,7 @@ class KeteranganUsahaController extends Controller
             $pemohon = AnggotaKeluarga::find($request->nik);
             $kk = KK::find($pemohon->no_kk);
             $kk->jumlah_surat_diajukan += 1;
+            $kk->save();
 
             return $letter;
         });

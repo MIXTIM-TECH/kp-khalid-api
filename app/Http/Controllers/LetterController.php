@@ -23,9 +23,10 @@ class LetterController extends Controller
         ]);
         if ($validator->fails()) return Response::errors($validator);
 
-        $pemohon = AnggotaKeluarga::with("alamat")->find($request->nik);
-        $isDataIssetNull = array_search(null, (array) $pemohon);
-        $isAlamatIssetNull = array_search(null, (array) $pemohon->alamat);
+        $pemohon = AnggotaKeluarga::with("alamat")->find($request->nik)->toArray();
+        $isDataIssetNull = array_search(null, $pemohon);
+        $isAlamatIssetNull = array_search(null, $pemohon["alamat"]);
+
         if ($isDataIssetNull || $isAlamatIssetNull) return Response::success(["redirect" => [
             "path"      => "anggota-keluarga/{$request->nik}",
             "method"    => "PUT",

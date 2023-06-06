@@ -46,6 +46,7 @@ class BelumMenikahController extends Controller
             $pemohon = AnggotaKeluarga::find($request->nik);
             $kk = KK::find($pemohon->no_kk);
             $kk->jumlah_surat_diajukan += 1;
+            $kk->save();
 
             return $letter;
         });
