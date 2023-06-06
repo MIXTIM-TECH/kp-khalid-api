@@ -23,13 +23,15 @@ class ManagementFamilyController extends Controller
 
     public function index(Request $request)
     {
-        $dataKeluarga = AnggotaKeluarga::with(["alamat", "penduduk"])->where("no_kk", $request->no_kk)->get()->toArray();
-        return Response::success($dataKeluarga);
+        $dataKeluarga = AnggotaKeluarga::with(["alamat", "penduduk"])->where("no_kk", $request->no_kk);
+        $dataKeluarga = (new Filters($dataKeluarga, $request))->search("nik")->result();
+        return Response::success($dataKeluarga->get()->toArray());
     }
 
     public function show($nik, Request $request)
     {
-        return Response::success(AnggotaKeluarga::with(["alamat", "penduduk"])->where("no_kk", $request->no_kk)->find($nik));
+        $anggotaKeluarga = AnggotaKeluarga::with(["alamat", "penduduk"])->where("no_kk", $request->no_kk)->find($nik);
+        return $anggotaKeluarga ? Response::success($anggotaKeluarga) : Response::message("Anggota keluarga tidak ditemukan", 404);
     }
 
     public function create(Request $request)
