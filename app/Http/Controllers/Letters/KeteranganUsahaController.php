@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Letters;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\LetterController;
 use App\Http\Res\Response;
 use App\Models\AnggotaKeluarga;
 use App\Models\InfoSurat;
@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class KeteranganUsahaController extends Controller
+class KeteranganUsahaController extends LetterController
 {
     public function create(Request $request)
     {
@@ -29,23 +29,14 @@ class KeteranganUsahaController extends Controller
             $keperluan = "Adapun surat keterangan ini dipergunakan untuk {$request->keperluan}";
 
             $letter = new KeteranganUsaha;
-            $letter->pemohon = $request->nik;
             $letter->keperluan = $keperluan;
             $letter->nama_usaha = $nama_usaha;
             $letter->alamat_usaha = $alamat_usaha;
+            $letter->surat_id = $this->addSurat($request);
             $letter->save();
 
-            $infoSurat = InfoSurat::where("jenis_surat", "KeteranganUsaha")->first();
-            $infoSurat->jumlah_surat += 1;
-            $infoSurat->save();
-
-            $pemohon = AnggotaKeluarga::find($request->nik);
-            $kk = KK::find($pemohon->no_kk);
-            $kk->jumlah_surat_diajukan += 1;
-            $kk->save();
-
-            $letter->no_kk = $kk->no_kk;
-            $letter->save();
+            $this->addJumlahSurat();
+            $this->addJumlahSuratDiajukan();
 
             return $letter;
         });

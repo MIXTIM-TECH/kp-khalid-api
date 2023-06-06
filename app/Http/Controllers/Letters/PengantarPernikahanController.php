@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Letters;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\LetterController;
 use Illuminate\Http\Request;
 
-class PengantarPernikahanController extends Controller
+class PengantarPernikahanController extends LetterController
 {
     // 
 }

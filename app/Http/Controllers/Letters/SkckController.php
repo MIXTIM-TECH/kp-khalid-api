@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Letters;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\LetterController;
 use App\Http\Res\Response;
 use App\Models\AnggotaKeluarga;
 use App\Models\InfoSurat;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class SkckController extends Controller
+class SkckController extends LetterController
 {
     public function create(Request $request)
     {
@@ -52,25 +52,16 @@ class SkckController extends Controller
             $keterangan = "Berdasarkan surat pengantar {$request->keterangan} dan sepanjang pengetahuan kami yang bersangkutan belum pernah terlibat kriminalitas dan berkelakuan baik.";
 
             $letter = new Skck;
-            $letter->pemohon            = $request->nik;
             $letter->surat_pengantar    = $surat_pengantar;
             $letter->keperluan          = $request->keperluan;
             $letter->keterangan         = $keterangan;
             $letter->id_ayah            = $ayah->id;
             $letter->id_ibu             = $ibu->id;
+            $letter->surat_id = $this->addSurat($request);
             $letter->save();
 
-            $infoSurat = InfoSurat::where("jenis_surat", "Skck")->first();
-            $infoSurat->jumlah_surat += 1;
-            $infoSurat->save();
-
-            $pemohon = AnggotaKeluarga::find($request->nik);
-            $kk = KK::find($pemohon->no_kk);
-            $kk->jumlah_surat_diajukan += 1;
-            $kk->save();
-
-            $letter->no_kk = $kk->no_kk;
-            $letter->save();
+            $this->addJumlahSurat();
+            $this->addJumlahSuratDiajukan();
 
             return $letter;
         });

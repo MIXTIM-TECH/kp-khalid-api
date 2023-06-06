@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Letters;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\LetterController;
 use App\Http\Res\Response;
 use App\Models\AnggotaKeluarga;
 use App\Models\InfoSurat;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class BelumMenikahController extends Controller
+class BelumMenikahController extends LetterController
 {
     public function create(Request $request)
     {
@@ -33,23 +33,14 @@ class BelumMenikahController extends Controller
             $keterangan = "Berdasarkan surat pengantar {$request->keterangan} dan sepengetahuan kami. Bahwa yang namanya tersebut diatas adalah benar Belum Menikah yang beralamat sebagaimana tersebut di atas. Adapun surat keterangan ini dipergunakan untuk";
 
             $letter = new BelumMenikah;
-            $letter->pemohon            = $request->nik;
             $letter->keperluan          = $request->keperluan;
             $letter->surat_pengantar    = $surat_pengantar;
             $letter->keterangan         = $keterangan;
+            $letter->surat_id = $this->addSurat($request);
             $letter->save();
 
-            $infoSurat = InfoSurat::where("jenis_surat", "BelumMenikah")->first();
-            $infoSurat->jumlah_surat += 1;
-            $infoSurat->save();
-
-            $pemohon = AnggotaKeluarga::find($request->nik);
-            $kk = KK::find($pemohon->no_kk);
-            $kk->jumlah_surat_diajukan += 1;
-            $kk->save();
-
-            $letter->no_kk = $kk->no_kk;
-            $letter->save();
+            $this->addJumlahSurat();
+            $this->addJumlahSuratDiajukan();
 
             return $letter;
         });

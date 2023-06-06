@@ -15,10 +15,7 @@ return new class extends Migration
     {
         Schema::create("surat_pengantar_pernikahan", function (Blueprint $table) {
             $table->id();
-            $table->string("pemohon", 16)->nullable();
-            $table->foreign("pemohon")->references("nik")->on("anggota_keluarga")->cascadeOnUpdate()->nullOnDelete();
-            $table->string("no_kk", 16)->nullable();
-            $table->foreign("no_kk")->references("no_kk")->on("kk")->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignId("surat_id")->constrained("surat");
             $table->text("alamat_pernikahan");
             $table->string("tempat_lahir");
             $table->date("tanggal_lahir");

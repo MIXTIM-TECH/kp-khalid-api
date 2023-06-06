@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Letters;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\LetterController;
 use App\Http\Res\Response;
 use App\Models\AnggotaKeluarga;
 use App\Models\InfoSurat;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class DomisiliController extends Controller
+class DomisiliController extends LetterController
 {
     public function create(Request $request)
     {
@@ -35,24 +35,15 @@ class DomisiliController extends Controller
             $keperluan = "Adapun Surat Keterangan Domisili ini dipergunakan untuk {$request->keperluan}";
 
             $letter = new Domisili;
-            $letter->pemohon            = $request->nik;
-            $letter->surat_pengantar    = $surat_pengantar;
-            $letter->keperluan          = $keperluan;
-            $letter->keterangan          = $keterangan;
-            $letter->pendidikan          = $request->pendidikan;
+            $letter->surat_pengantar = $surat_pengantar;
+            $letter->keperluan      = $keperluan;
+            $letter->keterangan     = $keterangan;
+            $letter->pendidikan     = $request->pendidikan;
+            $letter->surat_id = $this->addSurat($request);
             $letter->save();
 
-            $infoSurat = InfoSurat::where("jenis_surat", "Domisili")->first();
-            $infoSurat->jumlah_surat += 1;
-            $infoSurat->save();
-
-            $pemohon = AnggotaKeluarga::find($request->nik);
-            $kk = KK::find($pemohon->no_kk);
-            $kk->jumlah_surat_diajukan += 1;
-            $kk->save();
-
-            $letter->no_kk = $kk->no_kk;
-            $letter->save();
+            $this->addJumlahSurat();
+            $this->addJumlahSuratDiajukan();
 
             return $letter;
         });
