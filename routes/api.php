@@ -63,9 +63,10 @@ Route::middleware(Auth::class)->group(function () {
     });
 
     Route::controller(LetterController::class)->group(function () {
-        Route::get("/letter", "index");
+        Route::get("/surat", "index");
         Route::get("/info-surat", "letterInfo");
         Route::post("/pengajuan-surat", "create");
+        Route::delete("/pengajuan-surat/{surat}", "destroy");
     });
 });
 

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string("no_kk", 16)->nullable();
             $table->foreign("no_kk")->references("no_kk")->on("kk")->cascadeOnUpdate()->nullOnDelete();
             $table->foreignId("info_id")->constrained("info_surat")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->boolean("acc")->default(false);
             $table->timestamps();
         });
     }

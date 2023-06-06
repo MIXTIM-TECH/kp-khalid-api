@@ -8,29 +8,11 @@ use App\Models\InfoSurat;
 use App\Models\KK;
 use App\Models\Surat;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class LetterController extends Controller
 {
     protected static $kk, $infoSurat;
-
-    public function index(Request $request)
-    {
-        $result = DB::table("surat_info_surat")
-            ->join("surat_ket_belum_menikah", "surat_id", "=", "surat_ket_belum_menikah.id", "left")
-            ->join("surat_ket_domisili", "surat_id", "=", "surat_ket_domisili.id", "left")
-            ->join("surat_ket_tidak_mampu", "surat_id", "=", "surat_ket_tidak_mampu.id", "left")
-            ->join("surat_ket_usaha", "surat_id", "=", "surat_ket_usaha.id", "left")
-            ->join("surat_skck", "surat_id", "=", "surat_skck.id", "left");
-
-        return Response::success($result->get());
-    }
-
-    public function letterInfo()
-    {
-        return Response::success(InfoSurat::all());
-    }
 
     protected function addJumlahSurat()
     {
@@ -53,6 +35,22 @@ class LetterController extends Controller
         $surat->save();
 
         return $surat->id;
+    }
+
+    public function index(Request $request)
+    {
+        $result = Surat::with("info");
+        if ($request->user->role === "user") {
+            $result = $result->where("no_kk", $request->user->no_kk);
+        }
+
+        $result = (new Filters($result, $request))->search("pemohon")->result();
+        return Response::success($result->get());
+    }
+
+    public function letterInfo()
+    {
+        return Response::success(InfoSurat::all());
     }
 
     public function create(Request $request)
@@ -81,5 +79,10 @@ class LetterController extends Controller
 
         $controller = $request->letter_type . "Controller";
         return app()->call("\App\Http\Controllers\Letters\\" . $controller . "@create");
+    }
+
+    public function destroy(Surat $surat)
+    {
+        return $surat->delete() ? Response::message("Berhasil Menghapus Surat", 200) : Response::message("Gagal Menghapus");
     }
 }

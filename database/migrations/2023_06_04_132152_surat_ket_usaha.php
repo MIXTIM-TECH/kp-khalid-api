@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create("surat_ket_usaha", function (Blueprint $table) {
             $table->id();
-            $table->foreignId("surat_id")->constrained("surat");
+            $table->foreignId("surat_id")->constrained("surat")->cascadeOnDelete();
             $table->string("nama_usaha");
             $table->text("keperluan");
             $table->text("alamat_usaha");

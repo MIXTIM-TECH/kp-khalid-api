@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create("surat_pengantar_pernikahan", function (Blueprint $table) {
             $table->id();
-            $table->foreignId("surat_id")->constrained("surat");
+            $table->foreignId("surat_id")->constrained("surat")->cascadeOnDelete();
             $table->text("alamat_pernikahan");
             $table->string("tempat_lahir");
             $table->date("tanggal_lahir");

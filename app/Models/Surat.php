@@ -10,4 +10,9 @@ class Surat extends Model
     use HasFactory;
 
     protected $table = "surat";
+
+    public function info()
+    {
+        return $this->belongsTo(InfoSurat::class);
+    }
 }
