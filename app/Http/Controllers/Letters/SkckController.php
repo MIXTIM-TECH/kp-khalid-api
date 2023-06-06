@@ -69,6 +69,9 @@ class SkckController extends Controller
             $kk->jumlah_surat_diajukan += 1;
             $kk->save();
 
+            $letter->no_kk = $kk->no_kk;
+            $letter->save();
+
             return $letter;
         });
 

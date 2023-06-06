@@ -63,7 +63,8 @@ Route::middleware(Auth::class)->group(function () {
     });
 
     Route::controller(LetterController::class)->group(function () {
-        Route::get("/info-surat", "index");
+        Route::get("/letter", "index");
+        Route::get("/info-surat", "letterInfo");
         Route::post("/pengajuan-surat", "create");
     });
 });

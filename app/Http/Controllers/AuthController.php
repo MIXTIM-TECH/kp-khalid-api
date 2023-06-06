@@ -41,8 +41,7 @@ class AuthController extends Controller
 
         foreach ($keys as $prop => $key) {
             try {
-                // $exp = $this->time + 3600; // 1 jam
-                $exp = $this->time + 60; // 1 jam
+                $exp = $this->time + 3600; // 1 jam
                 if ($prop === "refresh") $exp = $this->time + $this->getSecondDays(7);
 
                 $payload["exp"] = $exp;
