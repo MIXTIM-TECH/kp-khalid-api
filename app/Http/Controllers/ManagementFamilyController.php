@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Res\Response;
 use App\Models\Alamat;
 use App\Models\AnggotaKeluarga;
+use App\Models\Credential;
 use App\Models\KK;
 use App\Models\Penduduk;
 use Illuminate\Http\Request;
@@ -141,6 +142,29 @@ class ManagementFamilyController extends Controller
         });
 
         return Response::success($result);
+    }
+
+    public function updateKepalaKeluarga(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "nik_kepala_keluarga" => "required|exists:anggota_keluarga,nik"
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        $result = DB::transaction(function () use ($request) {
+            $kk = KK::find($request->no_kk);
+            $credential = Credential::find($kk->nik_kepala_keluarga);
+
+            $kk->nik_kepala_keluarga = $request->nik_kepala_keluarga;
+            $kk->save();
+            $credential->username = $kk->nik_kepala_keluarga;
+            $credential->save();
+
+            return $credential;
+        });
+
+        $payload = AuthController::getPayload($result->username, $result->role);
+        return AuthController::getAuth($payload);
     }
 
     public function destroy(AnggotaKeluarga $anggotaKeluarga, Request $request)

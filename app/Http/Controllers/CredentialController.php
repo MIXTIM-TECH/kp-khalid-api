@@ -7,6 +7,7 @@ use App\Models\Credential;
 use App\Models\KK;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class CredentialController extends Controller
@@ -90,43 +91,37 @@ class CredentialController extends Controller
         return $admin->delete() ? Response::message("Admin Berhasil Dihapus", 200) : Response::message("Gagal Menghapus");
     }
 
-    public function updateProfile(Request $request)
-    {
-        $rules = ["username" => "required|string"];
-
-        if ($request->user->role === "user") $rules["username"] .= "|exists:anggota_keluarga,nik";
-        if ($request->user->username !== $request->username) $rules .= "|unique:credentials,username";
-
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) return Response::errors($validator);
-
-        // update credential
-        $userCredential = Credential::find($request);
-        $userCredential->username = $request->username;
-        $userCredential->save();
-
-        return Response::success($userCredential);
-    }
-
-    public function updatePassword(Request $request)
+    public function update(Request $request, Credential $credential)
     {
         $validator = Validator::make($request->all(), [
-            "oldPassword"   => "required|string",
-            "password"      => "required|min:8|string"
+            "username"   => "required|string",
+            "password"   => "min:8|string"
         ]);
         if ($validator->fails()) return Response::errors($validator);
 
-        $userCredential = Credential::find($request->user->username);
-        // cek password
-        if (!password_verify($request->password, $userCredential->password)) {
-            return $this->unknownResponse("Password salah!", 400);
+        if ($request->username !== $credential->username) {
+            $validator = Validator::make($request->all(), [
+                "username"  => "unique:credentials,username"
+            ]);
         }
 
-        // update credential
-        $userCredential->password = password_hash($request->password, PASSWORD_DEFAULT);
-        $userCredential->save();
+        $result = DB::transaction(function () use ($credential, $request) {
+            $credential->username = $request->username;
+            if ($request->password) $credential->password = password_hash($request->password, PASSWORD_DEFAULT);
 
-        return Response::success($userCredential);
+            // jika user update kk
+            if ($credential->role === "user") {
+                $kk = KK::where("nik_kepala_keluarga", $credential->username)->first();
+                $kk->nik_kepala_keluarga = $credential->username;
+                $kk->save();
+            }
+
+            $credential->save();
+            return $credential;
+        });
+
+        $payload = AuthController::getPayload($result->username, $result->role);
+        return AuthController::getAuth($payload);
     }
 
     public function deleteAccount(Request $request)

@@ -27,22 +27,23 @@ class AuthController extends Controller
         $this->time = time();
     }
 
-    private function getSecondDays(int $day): int
+    private static function getSecondDays(int $day): int
     {
         $hours = 3600;
         $days = $hours * 24;
         return $days * $day;
     }
 
-    private function generateToken(array $payload): array
+    private static function generateToken(array $payload): array
     {
+        $time = time();
         $keys = ["access" => env("JWT_SECRET"), "refresh" => env("JWT_REFRESH")];
         $tokens = [];
 
         foreach ($keys as $prop => $key) {
             try {
-                $exp = $this->time + 3600; // 1 jam
-                if ($prop === "refresh") $exp = $this->time + $this->getSecondDays(7);
+                $exp = $time + 3600; // 1 jam
+                if ($prop === "refresh") $exp = $time + self::getSecondDays(7);
 
                 $payload["exp"] = $exp;
                 $tokens["token_$prop"] = JWT::encode($payload, $key, "HS256");
@@ -51,6 +52,29 @@ class AuthController extends Controller
             }
         }
         return $tokens;
+    }
+
+    public static function getAuth(array $payload)
+    {
+        $tokens = self::generateToken($payload);
+        return array_merge($payload, $tokens);
+    }
+
+    public static function getPayload(string $username, string $role): array
+    {
+        $time = time();
+        $payload = [
+            "username"  => $username,
+            "role"      => $role,
+            "iat"       => $time
+        ];
+
+        if ($role === "user") {
+            $kk = KK::where("nik_kepala_keluarga", $username)->first();
+            $payload["no_kk"] = $kk->no_kk;
+        }
+
+        return $payload;
     }
 
     public function login(Request $request)
@@ -82,7 +106,7 @@ class AuthController extends Controller
             "iat"       => $this->time
         ];
         if ($credential->penduduk) $payload["no_kk"] = $credential->penduduk->no_kk;
-        return Response::success(array_merge($payload, $this->generateToken($payload)));
+        return Response::success(array_merge($payload, self::generateToken($payload)));
     }
 
     public function register(Request $request)
@@ -138,7 +162,7 @@ class AuthController extends Controller
             $waktuAktivasi = new WaktuAktivasi;
             $waktuAktivasi->username = $request->nik;
             $waktuAktivasi->tanggal_registrasi = $this->time;
-            $waktuAktivasi->batas_aktivasi = $this->time + $this->getSecondDays(2);
+            $waktuAktivasi->batas_aktivasi = $this->time + self::getSecondDays(2);
             $waktuAktivasi->save();
 
             return $user;
@@ -159,7 +183,7 @@ class AuthController extends Controller
             $payload = JWT::decode($request->token_refresh, new Key(env("JWT_REFRESH"), "HS256"));
             $payload->iat = $this->time;
 
-            return Response::success($this->generateToken((array) $payload));
+            return Response::success(self::generateToken((array) $payload));
         } catch (Exception $e) {
             return Response::message($e->getMessage());
         }

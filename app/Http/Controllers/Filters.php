@@ -39,6 +39,15 @@ class Filters
         return $this;
     }
 
+    public function calc()
+    {
+        if ($this->request->count) {
+            $this->result->count();
+        }
+
+        return $this;
+    }
+
     public function result()
     {
         return $this->result;

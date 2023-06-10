@@ -58,6 +58,7 @@ Route::middleware(Auth::class)->group(function () {
         Route::get("/anggota-keluarga", "index");
         Route::get("/anggota-keluarga/{nik}", "show");
         Route::post("/anggota-keluarga", "create");
+        Route::patch("/anggota-keluarga/kepala-keluarga", "updateKepalaKeluarga");
         Route::put("/anggota-keluarga/{anggotaKeluarga}", "update");
         Route::delete("/anggota-keluarga/{anggotaKeluarga}", "destroy");
     });
@@ -68,11 +69,16 @@ Route::middleware(Auth::class)->group(function () {
         Route::post("/pengajuan-surat", "create");
         Route::delete("/pengajuan-surat/{surat}", "destroy");
     });
+
+    // --
+    Route::controller(AssetController::class)->group(function () {
+        Route::get("/info", "info");
+    });
+
+    Route::controller(CredentialController::class)->group(function () {
+        Route::put("/{credential}/edit-akun", "update");
+    });
 });
-
-
-// TODO: Get KK Image
-Route::get("/asset", [AssetController::class, "show"]);
 
 
 // TODO: Public
