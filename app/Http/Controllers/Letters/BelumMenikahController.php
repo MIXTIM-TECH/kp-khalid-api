@@ -50,6 +50,6 @@ class BelumMenikahController extends LetterController
 
     public function detail($surat_id)
     {
-        return BelumMenikah::where("surat_id", $surat_id)->first();
+        return BelumMenikah::with(["surat", "surat.info", "surat.pemohon"])->where("surat_id", $surat_id)->first();
     }
 }
