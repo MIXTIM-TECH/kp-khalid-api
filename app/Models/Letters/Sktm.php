@@ -14,11 +14,11 @@ class Sktm extends Model
 
     public function surat()
     {
-        return $this->hasOne(Surat::class);
+        return $this->belongsTo(Surat::class);
     }
 
     public function orangTua()
     {
-        return $this->hasOne(OrangTua::class);
+        return $this->belongsTo(OrangTua::class);
     }
 }

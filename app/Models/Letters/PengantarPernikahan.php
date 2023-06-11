@@ -15,16 +15,16 @@ class PengantarPernikahan extends Model
 
     public function surat()
     {
-        return $this->hasOne(Surat::class);
+        return $this->belongsTo(Surat::class);
     }
 
     public function ayah()
     {
-        return $this->hasOne(OrangTua::class, "id_ayah");
+        return $this->belongsTo(OrangTua::class, "id_ayah");
     }
 
     public function ibu()
     {
-        return $this->hasOne(OrangTua::class, "id_ibu");
+        return $this->belongsTo(OrangTua::class, "id_ibu");
     }
 }

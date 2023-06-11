@@ -14,6 +14,6 @@ class BelumMenikah extends Model
 
     public function surat()
     {
-        return $this->hasOne(Surat::class);
+        return $this->belongsTo(Surat::class);
     }
 }
