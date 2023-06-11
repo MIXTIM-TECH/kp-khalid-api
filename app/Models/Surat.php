@@ -18,6 +18,6 @@ class Surat extends Model
 
     public function pemohon()
     {
-        return $this->hasOne(AnggotaKeluarga::class);
+        return $this->hasOne(AnggotaKeluarga::class, "pemohon");
     }
 }
