@@ -68,4 +68,9 @@ class SkckController extends LetterController
 
         return Response::success($result);
     }
+
+    public function detail($surat_id)
+    {
+        return Skck::where("surat_id", $surat_id)->first();
+    }
 }

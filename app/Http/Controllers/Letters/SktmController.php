@@ -76,4 +76,9 @@ class SktmController extends LetterController
 
         return Response::success($result);
     }
+
+    public function detail($surat_id)
+    {
+        return Sktm::where("surat_id", $surat_id)->first();
+    }
 }

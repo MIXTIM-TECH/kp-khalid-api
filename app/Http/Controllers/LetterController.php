@@ -60,7 +60,7 @@ class LetterController extends Controller
         ]);
         if ($validator->fails()) return Response::errors($validator);
 
-        return app()->call("\App\Http\Controllers\Letters\\" . $jenisSurat . "@detail", [
+        return app()->call("\App\Http\Controllers\Letters\\" . $jenisSurat . "Controller@detail", [
             "surat_id" => $surat->id
         ]);
     }

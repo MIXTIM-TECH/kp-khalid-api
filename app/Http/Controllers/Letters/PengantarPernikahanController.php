@@ -60,4 +60,9 @@ class PengantarPernikahanController extends LetterController
             $letter->save();
         });
     }
+
+    public function detail($surat_id)
+    {
+        return PengantarPernikahan::where("surat_id", $surat_id)->first();
+    }
 }
