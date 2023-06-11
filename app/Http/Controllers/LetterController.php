@@ -48,6 +48,23 @@ class LetterController extends Controller
         return Response::success($result->get());
     }
 
+    public function show(Surat $surat)
+    {
+        return Surat::with("info")->find($surat->id);
+    }
+
+    public function showByJenisSurat($jenisSurat, Surat $surat)
+    {
+        $validator = Validator::make(["jenis_surat" => $jenisSurat], [
+            "jenis_surat"   => "exists:info_surat,jenis_surat"
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        return app()->call("\App\Http\Controller\Letters\\" . $jenisSurat . "@detail", [
+            "surat_id" => $surat->id
+        ]);
+    }
+
     public function letterInfo()
     {
         return Response::success(InfoSurat::all());
@@ -79,6 +96,11 @@ class LetterController extends Controller
 
         $controller = $request->letter_type . "Controller";
         return app()->call("\App\Http\Controllers\Letters\\" . $controller . "@create");
+    }
+
+    public function update()
+    {
+        // 
     }
 
     public function destroy(Surat $surat)

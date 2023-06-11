@@ -47,4 +47,9 @@ class BelumMenikahController extends LetterController
 
         return Response::success($result);
     }
+
+    public function detail($surat_id)
+    {
+        return BelumMenikah::where("surat_id", $surat_id)->first();
+    }
 }
