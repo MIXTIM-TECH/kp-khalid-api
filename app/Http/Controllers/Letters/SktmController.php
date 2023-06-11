@@ -79,6 +79,6 @@ class SktmController extends LetterController
 
     public function detail($surat_id)
     {
-        return Sktm::with(["surat", "surat.info", "surat.pemohon", "orangTua"])->where("surat_id", $surat_id)->first();
+        return Sktm::with(["surat", "surat.info", "surat.pemohon", "orangTua", "surat.pemohon.alamat"])->where("surat_id", $surat_id)->first();
     }
 }

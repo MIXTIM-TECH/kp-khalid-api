@@ -63,7 +63,7 @@ class PengantarPernikahanController extends LetterController
 
     public function detail($surat_id)
     {
-        return PengantarPernikahan::with(["surat", "surat.info", "surat.pemohon", "ayah", "ibu"])
+        return PengantarPernikahan::with(["surat", "surat.info", "surat.pemohon", "ayah", "ibu", "surat.pemohon.alamat"])
             ->where("surat_id", $surat_id)->first();
     }
 }

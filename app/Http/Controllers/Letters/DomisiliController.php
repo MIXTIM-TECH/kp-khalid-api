@@ -53,6 +53,6 @@ class DomisiliController extends LetterController
 
     public function detail($surat_id)
     {
-        return Domisili::with(["surat", "surat.info", "surat.pemohon"])->where("surat_id", $surat_id)->first();
+        return Domisili::with(["surat", "surat.info", "surat.pemohon", "surat.pemohon.alamat"])->where("surat_id", $surat_id)->first();
     }
 }

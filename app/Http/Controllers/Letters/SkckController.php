@@ -71,6 +71,6 @@ class SkckController extends LetterController
 
     public function detail($surat_id)
     {
-        return Skck::with(["surat", "surat.info", "surat.pemohon", "ayah", "ibu"])->where("surat_id", $surat_id)->first();
+        return Skck::with(["surat", "surat.info", "surat.pemohon", "ayah", "ibu", "surat.pemohon.alamat"])->where("surat_id", $surat_id)->first();
     }
 }
