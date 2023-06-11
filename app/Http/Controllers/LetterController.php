@@ -100,7 +100,7 @@ class LetterController extends Controller
 
     public function update()
     {
-        // 
+        // -
     }
 
     public function destroy(Surat $surat)
