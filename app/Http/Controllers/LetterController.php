@@ -50,7 +50,7 @@ class LetterController extends Controller
 
     public function show(Surat $surat)
     {
-        return Surat::with("info")->find($surat->id);
+        return Surat::with(["info", "pemohon"])->find($surat->id);
     }
 
     public function showByJenisSurat($jenisSurat, Surat $surat)

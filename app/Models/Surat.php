@@ -13,11 +13,11 @@ class Surat extends Model
 
     public function info()
     {
-        return $this->hasOne(InfoSurat::class);
+        return $this->belongsTo(InfoSurat::class);
     }
 
     public function pemohon()
     {
-        return $this->hasOne(AnggotaKeluarga::class, "pemohon");
+        return $this->belongsTo(AnggotaKeluarga::class, "pemohon");
     }
 }
