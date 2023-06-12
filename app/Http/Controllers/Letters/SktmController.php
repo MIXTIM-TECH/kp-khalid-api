@@ -6,6 +6,7 @@ use App\Http\Controllers\LetterController;
 use App\Http\Res\Response;
 use App\Models\Letters\Sktm;
 use App\Models\OrangTua;
+use App\Models\Surat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -67,6 +68,51 @@ class SktmController extends LetterController
 
             $this->addJumlahSurat();
             $this->addJumlahSuratDiajukan();
+
+            return $letter;
+        });
+
+        return Response::success($result);
+    }
+
+    public function update(Request $request, Surat $surat)
+    {
+        $validator = Validator::make($request->all(), [
+            "nama_orang_tua"                => "required|string",
+            "jenis_kelamin_orang_tua"       => [
+                "required",
+                Rule::in(["P", "L"])
+            ],
+            "tempat_lahir_orang_tua"        => "required|string",
+            "tanggal_lahir_orang_tua"       => "required|date_format:Y-m-d",
+            "pekerjaan_orang_tua"           => "required|string",
+            "status_perkawinan"             => "required|string",
+            "pendidikan_orang_tua"          => "required|string",
+            "nik_orang_tua"                 => "required|string|max:16",
+            "alamat_orang_tua"              => "required|string",
+            "keperluan"                     => "required|string",
+            "keterangan"                    => "required|string",
+            "pendidikan"                    => "required|string"
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        $result = DB::transaction(function () use ($request, $surat) {
+            $letter = Sktm::where("surat_id", $surat->id)->first();
+            $letter->keperluan = $request->keperluan;
+            $letter->keterangan = $request->keterangan;
+            $letter->pendidikan = $request->pendidikan;
+
+            $parent = OrangTua::find($letter->id_orang_tua);
+            $parent->nama_lengkap = $request->nama_orang_tua;
+            $parent->jenis_kelamin = $request->jenis_kelamin_orang_tua;
+            $parent->tempat_lahir = $request->tempat_lahir_orang_tua;
+            $parent->tanggal_lahir = $request->tanggal_lahir_orang_tua;
+            $parent->pekerjaan = $request->pekerjaan_orang_tua;
+            $parent->status_perkawinan = $request->status_perkawinan;
+            $parent->pendidikan = $request->pendidikan_orang_tua;
+            $parent->nik = $request->nik_orang_tua;
+            $parent->alamat = $request->alamat_orang_tua;
+            $parent->save();
 
             return $letter;
         });

@@ -9,6 +9,7 @@ use App\Models\InfoSurat;
 use App\Models\KK;
 use App\Models\Letters\Skck;
 use App\Models\OrangTua;
+use App\Models\Surat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -62,6 +63,44 @@ class SkckController extends LetterController
 
             $this->addJumlahSurat();
             $this->addJumlahSuratDiajukan();
+
+            return $letter;
+        });
+
+        return Response::success($result);
+    }
+
+    public function update(Request $request, Surat $surat)
+    {
+        $validator = Validator::make($request->all(), [
+            "keperluan"         => "required|string",
+            "keterangan"        => "required|string",
+            "nama_ayah"         => "required|string",
+            "nama_ibu"          => "required|string",
+            "agama"             => [
+                "required",
+                Rule::in(["Islam", "Kristen Protestan", "Katolik", "Hindu", "Buddha", "Kong Hu Cu"])
+            ],
+            "alamat"            => "required|string"
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        $result = DB::transaction(function () use ($request, $surat) {
+            $letter = Skck::where("surat_id", $surat->id)->first();
+            $letter->keperluan          = $request->keperluan;
+            $letter->keterangan         = $request->keterangan;
+            $letter->save();
+
+            $ayah = OrangTua::find($letter->id_ayah);
+            $ibu = OrangTua::find($letter->id_ibu);
+            $ayah->nama_lengkap = $request->nama_ayah;
+            $ibu->nama_lengkap = $request->nama_ibu;
+            $ayah->agama = $request->agama;
+            $ibu->agama = $request->agama;
+            $ayah->alamat = $request->alamat;
+            $ibu->alamat = $request->alamat;
+            $ayah->save();
+            $ibu->save();
 
             return $letter;
         });

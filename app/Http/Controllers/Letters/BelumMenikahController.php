@@ -48,9 +48,18 @@ class BelumMenikahController extends LetterController
 
     public function update(Request $request, Surat $surat)
     {
-        return $request->all();
-        // $validator = re
-        return Response::success(["oke"]);
+        $validator = Validator::make($request->all(), [
+            "keperluan"     => "required|string",
+            "keterangan"     => "required|string"
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        $letter = BelumMenikah::where("surat_id", $surat->id)->first();
+        $letter->keperluan = $request->keperluan;
+        $letter->keterangan = $request->keterangan;
+        $letter->save();
+
+        return $letter;
     }
 
     public function detail($surat_id)

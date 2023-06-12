@@ -8,6 +8,7 @@ use App\Models\AnggotaKeluarga;
 use App\Models\InfoSurat;
 use App\Models\KK;
 use App\Models\Letters\KeteranganUsaha;
+use App\Models\Surat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -42,6 +43,24 @@ class KeteranganUsahaController extends LetterController
         });
 
         return Response::success($result);
+    }
+
+    public function update(Request $request, Surat $surat)
+    {
+        $validator = Validator::make($request->all(), [
+            "keperluan"     => "required|string",
+            "nama_usaha"     => "required|string",
+            "alamat_usaha"  => "required|string"
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        $letter = KeteranganUsaha::where("surat_id", $surat->id)->first();
+        $letter->keperluan = $request->keperluan;
+        $letter->nama_usaha = $request->nama_usaha;
+        $letter->alamat_usaha = $request->alamat_usaha;
+        $letter->save();
+
+        return $letter;
     }
 
     public function detail($surat_id)
