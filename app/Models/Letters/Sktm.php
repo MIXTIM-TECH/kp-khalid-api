@@ -3,6 +3,7 @@
 namespace App\Models\Letters;
 
 use App\Models\OrangTua;
+use App\Models\Surat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

@@ -4,9 +4,6 @@ namespace App\Http\Controllers\Letters;
 
 use App\Http\Controllers\LetterController;
 use App\Http\Res\Response;
-use App\Models\AnggotaKeluarga;
-use App\Models\InfoSurat;
-use App\Models\KK;
 use App\Models\Letters\Sktm;
 use App\Models\OrangTua;
 use Illuminate\Http\Request;
