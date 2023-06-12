@@ -8,6 +8,7 @@ use App\Models\AnggotaKeluarga;
 use App\Models\InfoSurat;
 use App\Models\KK;
 use App\Models\Letters\Domisili;
+use App\Models\Surat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -49,6 +50,24 @@ class DomisiliController extends LetterController
         });
 
         return Response::success($result);
+    }
+
+    public function update(Request $request, Surat $surat)
+    {
+        $validator = Validator::make($request->all(), [
+            "keperluan"     => "required|string",
+            "keterangan"     => "required|string",
+            "pendidikan"     => "required|string"
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        $letter = Domisili::where("surat_id", $surat->id)->first();
+        $letter->keperluan = $request->keperluan;
+        $letter->keterangan = $request->keterangan;
+        $letter->pendidikan = $request->pendidikan;
+        $letter->save();
+
+        return $letter;
     }
 
     public function detail($surat_id)

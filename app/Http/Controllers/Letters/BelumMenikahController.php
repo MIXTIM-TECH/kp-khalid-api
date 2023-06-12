@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Letters;
 
 use App\Http\Controllers\LetterController;
 use App\Http\Res\Response;
-use App\Models\AnggotaKeluarga;
-use App\Models\InfoSurat;
-use App\Models\KK;
 use App\Models\Letters\BelumMenikah;
+use App\Models\Surat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -46,6 +44,13 @@ class BelumMenikahController extends LetterController
         });
 
         return Response::success($result);
+    }
+
+    public function update(Request $request, Surat $surat)
+    {
+        return $request->all();
+        // $validator = re
+        return Response::success(["oke"]);
     }
 
     public function detail($surat_id)

@@ -98,9 +98,12 @@ class LetterController extends Controller
         return app()->call("\App\Http\Controllers\Letters\\" . $controller . "@create");
     }
 
-    public function update()
+    public function update(Request $request, Surat $surat)
     {
-        // -
+        $letter = Surat::with("info")->find($surat->id);
+        $controller = $letter->info->jenis_surat;
+
+        return app()->call("\App\Http\Controllers\Letters\\" . $controller . "Controller@update", ["surat" => $surat]);
     }
 
     public function destroy(Surat $surat)

@@ -70,6 +70,7 @@ Route::middleware(Auth::class)->group(function () {
         Route::get("/info-surat", "letterInfo");
         Route::post("/pengajuan-surat", "create");
         Route::delete("/pengajuan-surat/{surat}", "destroy");
+        Route::put("/surat/{surat}", "update");
     });
 
     // --
