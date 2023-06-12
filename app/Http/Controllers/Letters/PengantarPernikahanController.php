@@ -46,18 +46,44 @@ class PengantarPernikahanController extends LetterController
         ]);
         if ($validator->fails()) return Response::errors($validator);
 
-        DB::transaction(function () {
+        DB::transaction(function () use ($request) {
             $ayah = new OrangTua;
-            // 
+            $ayah->nama_lengkap = $request->nama_ayah;
+            $ayah->agama = $request->agama_ayah;
+            $ayah->alamat = $request->alamat_ayah;
+            $ayah->jenis_kelamin = "L";
+            $ayah->status_perkawinan = $request->status_perkawinan_ayah;
+            $ayah->pendidikan = $request->pendidikan_ayah;
+            $ayah->nik = $request->nik_ayah;
+            $ayah->tempat_lahir = $request->tempat_lahir_ayah;
+            $ayah->tanggal_lahir = $request->tanggal_lahir_ayah;
+            $ayah->pekerjaan = $request->pekerjaan_ayah;
             $ayah->save();
 
             $ibu = new OrangTua;
-            // 
+            $ibu->nama_lengkap = $request->nama_ibu;
+            $ibu->agama = $request->agama_ibu;
+            $ibu->alamat = $request->alamat_ibu;
+            $ibu->jenis_kelamin = "P";
+            $ibu->status_perkawinan = $request->status_perkawinan_ibu;
+            $ibu->pendidikan = $request->pendidikan_ibu;
+            $ibu->nik = $request->nik_ibu;
+            $ibu->tempat_lahir = $request->tempat_lahir_ibu;
+            $ibu->tanggal_lahir = $request->tanggal_lahir_ibu;
+            $ibu->pekerjaan = $request->pekerjaan_ibu;
             $ibu->save();
 
             $letter = new PengantarPernikahan;
-            // 
+            $letter->surat_id = $this->addSurat($request);
+            $letter->alamat_pernikahan = $request->alamat_pernikahan;
+            $letter->tempat_lahir = $request->tempat_lahir;
+            $letter->tanggal_lahir = $request->tanggal_lahir;
+            $letter->id_ayah = $ayah->id;
+            $letter->id_ibu = $request->id;
             $letter->save();
+
+            $this->addJumlahSurat();
+            $this->addJumlahSuratDiajukan();
         });
     }
 

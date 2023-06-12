@@ -21,6 +21,8 @@ return new class extends Migration
             $table->date("tanggal_lahir");
             $table->foreignId("id_ayah")->constrained("orang_tua");
             $table->foreignId("id_ibu")->constrained("orang_tua");
+            $table->foreignId("id_mempelai")->constrained("mempelai");
+            $table->foreignId("id_mantan_suami_istri")->constrained("mantan_suami_istri");
             $table->timestamps();
         });
     }

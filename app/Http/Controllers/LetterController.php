@@ -100,6 +100,14 @@ class LetterController extends Controller
 
     public function update(Request $request, Surat $surat)
     {
+        $validator = Validator::make($request->all(), [
+            "no_surat"  => "required|string"
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        $surat->no_surat = $request->no_surat;
+        $surat->save();
+
         $letter = Surat::with("info")->find($surat->id);
         $controller = $letter->info->jenis_surat;
 
