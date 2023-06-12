@@ -21,6 +21,7 @@ class Auth
     public function handle(Request $request, Closure $next)
     {
         $token = $request->bearerToken();
+        if (!$token) $token = $request->token;
         if (!$token) return Response::message("Dibutuhkan Token!", 401);
 
         try {

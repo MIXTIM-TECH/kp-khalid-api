@@ -8,7 +8,9 @@ use App\Models\InfoSurat;
 use App\Models\KK;
 use App\Models\Surat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class LetterController extends Controller
 {
@@ -117,5 +119,39 @@ class LetterController extends Controller
     public function destroy(Surat $surat)
     {
         return $surat->delete() ? Response::message("Berhasil Menghapus Surat", 200) : Response::message("Gagal Menghapus");
+    }
+
+    public function upload(Request $request, Surat $surat)
+    {
+        $validator = Validator::make($request->all(), [
+            "file_surat"  => [
+                "required",
+                Rule::file()->types("pdf")->max(2048)
+            ]
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        $fileSurat = $request->file("file_surat")->store("letters");
+        return $fileSurat ? Response::message("Berhasil mengupload surat", 200) : Response::message("Gagal mengupload surat");
+    }
+
+    public function getSurat(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "file_name"  => ["required"]
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        return Storage::disk("local")->get($request->file_name);
+    }
+
+    public function downloadSurat(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "file_name"  => ["required"]
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        return Storage::download($request->file_name);
     }
 }
