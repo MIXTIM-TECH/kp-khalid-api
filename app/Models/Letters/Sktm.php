@@ -20,6 +20,6 @@ class Sktm extends Model
 
     public function orangTua()
     {
-        return $this->belongsTo(OrangTua::class);
+        return $this->belongsTo(OrangTua::class, "id_orang_tua");
     }
 }
