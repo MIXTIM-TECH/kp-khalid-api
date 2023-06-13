@@ -6,6 +6,7 @@ use App\Http\Res\Response;
 use App\Models\Credential;
 use App\Models\ForgetPassword;
 use App\Models\KK;
+use App\Models\Penduduk;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -154,13 +155,18 @@ class CredentialController extends Controller
     {
         $validator = Validator::make($request->all(), [
             "phone_number"          => "required|numeric",
-            "nik_kepala_keluarga"   => "required|exists:kk,nik_kepala_keluarga"
+            "nik_kepala_keluarga"   => "required|exists:penduduk,nik_anggota_keluarga"
         ]);
         if ($validator->fails()) return Response::errors($validator);
 
         $otp = "";
         for ($i = 0; $i < 6; $i++) {
             $otp .= rand(0, 9);
+        }
+
+        $penduduk = Penduduk::where("nik_anggota_keluarga", $request->nik_kepala_keluarga)->first();
+        if ($penduduk->no_whatsapp !== $request->phone_number) {
+            return Response::message("Maaf, Nomor Telepon Tidak Terdaftar", 401);
         }
 
         $forgetPassword = ForgetPassword::updateOrCreate([
