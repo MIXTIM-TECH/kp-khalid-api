@@ -45,7 +45,12 @@ Route::middleware(Auth::class)->group(function () {
         Route::controller(KKController::class)->group(function () {
             Route::get("/data-keluarga", "index");
             Route::get("/data-keluarga/{kk}", "show");
+            Route::get("/data-keluarga/foto-kk/{kk}", "fotoKk");
             Route::delete("/data-keluarga/{kk}", "destroy");
+        });
+
+        Route::controller(LetterController::class)->group(function () {
+            Route::patch("/surat/{surat}/acc", "acc");
         });
     });
 

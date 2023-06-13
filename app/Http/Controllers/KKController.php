@@ -6,6 +6,7 @@ use App\Http\Res\Response;
 use App\Models\Credential;
 use App\Models\KK;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class KKController extends Controller
 {
@@ -19,6 +20,11 @@ class KKController extends Controller
     public function show($noKK)
     {
         return Response::success(KK::with(["anggotaKeluarga", "kepalaKeluarga"])->find($noKK));
+    }
+
+    public function fotoKK(KK $kk)
+    {
+        return Storage::disk("local")->get($kk->foto_kk);
     }
 
     public function destroy(KK $kk)

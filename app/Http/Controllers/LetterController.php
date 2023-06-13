@@ -116,6 +116,14 @@ class LetterController extends Controller
         return app()->call("\App\Http\Controllers\Letters\\" . $controller . "Controller@update", ["surat" => $surat]);
     }
 
+    public function acc(Surat $surat)
+    {
+        $surat->acc = 1;
+        $surat->save();
+
+        return Response::message("Surat Diacc!", 200);
+    }
+
     public function destroy(Surat $surat)
     {
         return $surat->delete() ? Response::message("Berhasil Menghapus Surat", 200) : Response::message("Gagal Menghapus");
