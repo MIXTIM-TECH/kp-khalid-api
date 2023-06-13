@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Res\Response;
 use App\Models\Credential;
+use App\Models\ForgetPassword;
 use App\Models\KK;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 class CredentialController extends Controller
@@ -135,5 +137,77 @@ class CredentialController extends Controller
         if ($request->user->role === "user") {
             //
         }
+    }
+
+    private function sendWhatsapp(string $target, string $message)
+    {
+        Http::withHeaders([
+            "Content-Type"      => "application/json",
+            "Authorization"     => "c5Gnmd-KuKaytpjrHy9h"
+        ])->post("https://api.fonnte.com/send", [
+            "target"    => $target,
+            "message"   => $message
+        ]);
+    }
+
+    public function codeOtp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "phone_number"          => "required|numeric",
+            "nik_kepala_keluarga"   => "required|exists:kk,nik_kepala_keluarga"
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        $otp = "";
+        for ($i = 0; $i < 6; $i++) {
+            $otp .= rand(0, 9);
+        }
+
+        $forgetPassword = ForgetPassword::updateOrCreate([
+            "nik_kepala_keluarga"   => $request->nik_kepala_keluarga
+        ], [
+            "phone_number"  => $request->phone_number,
+            "otp"       => $otp,
+            "expired"   => time() + 300, // 5 menit
+        ]);
+
+        $this->sendWhatsapp($forgetPassword->phone_number, "Kode OTP Anda : $otp");
+        return Response::success([
+            "nik_kepala_keluarga"   => $request->nik_kepala_keluarga
+        ]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "username"   => "required|exists:forget_password,nik_kepala_keluarga",
+            "otp"                   => "required|numeric"
+        ]);
+        if ($validator->fails()) return Response::errors($validator);
+
+        $otp = ForgetPassword::where("nik_kepala_keluarga", $request->username)->first();
+        if ($otp->otp !== $request->otp) return Response::message("OTP Salah!", 401);
+        if ($otp->expired < time()) return Response::message("Kode OTP Kadaluarsa", 401);
+
+        $newPassword = \Illuminate\Support\Str::random(10);
+        $phoneNumber = $otp->phone_number;
+
+        $result = DB::transaction(function () use ($request, $otp, $newPassword) {
+            $credential = Credential::find($request->username);
+            $credential->password = password_hash($newPassword, PASSWORD_DEFAULT);
+            $credential->save();
+
+            $otp->delete();
+            return $credential;
+        });
+
+        $message = <<<NOD
+            Akun anda telah direset:
+                Username: $result->username
+                Password: $newPassword
+        NOD;
+
+        $this->sendWhatsapp($phoneNumber, $message);
+        return Response::success($result);
     }
 }

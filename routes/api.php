@@ -93,3 +93,8 @@ Route::controller(AuthController::class)->group(function () {
     Route::post("/login", "login");
     Route::post("/refresh-token", "refreshToken");
 });
+
+Route::controller(CredentialController::class)->group(function () {
+    Route::post("/forget-password", "codeOtp");
+    Route::post("/reset", "resetPassword");
+});
