@@ -155,7 +155,8 @@ class LetterController extends Controller
         ]);
         if ($validator->fails()) return Response::errors($validator);
 
-        return base64_encode(Storage::disk("local")->get($request->file_name));
+        $base64File = base64_encode(Storage::disk("local")->get($request->file_name));
+        return Response::success(["data" => $base64File]);
     }
 
     public function downloadSurat(Request $request)
