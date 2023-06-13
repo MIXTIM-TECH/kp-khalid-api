@@ -132,6 +132,8 @@ class LetterController extends Controller
         if ($validator->fails()) return Response::errors($validator);
 
         $fileSurat = $request->file("file_surat")->store("letters");
+
+        if ($fileSurat) $surat->file_surat = $fileSurat;
         return $fileSurat ? Response::message("Berhasil mengupload surat", 200) : Response::message("Gagal mengupload surat");
     }
 
