@@ -189,7 +189,7 @@ class CredentialController extends Controller
         if ($otp->otp !== $request->otp) return Response::message("OTP Salah!", 401);
         if ($otp->expired < time()) return Response::message("Kode OTP Kadaluarsa", 401);
 
-        $newPassword = \Illuminate\Support\Str::random(10);
+        $newPassword = \Illuminate\Support\Str::random();
         $phoneNumber = $otp->phone_number;
 
         $result = DB::transaction(function () use ($request, $otp, $newPassword) {
