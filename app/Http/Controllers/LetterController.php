@@ -133,7 +133,10 @@ class LetterController extends Controller
 
         $fileSurat = $request->file("file_surat")->store("letters");
 
-        if ($fileSurat) $surat->file_surat = $fileSurat;
+        if ($fileSurat) {
+            $surat->file_surat = $fileSurat;
+            $surat->save();
+        }
         return $fileSurat ? Response::message("Berhasil mengupload surat", 200) : Response::message("Gagal mengupload surat");
     }
 
