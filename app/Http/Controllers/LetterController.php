@@ -8,6 +8,7 @@ use App\Models\InfoSurat;
 use App\Models\KK;
 use App\Models\Surat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -166,6 +167,21 @@ class LetterController extends Controller
         ]);
         if ($validator->fails()) return Response::errors($validator);
 
-        return Storage::download($request->file_name);
+        $file = storage_path("app/{$request->file_name}");
+
+        return response()->download($file, "surat.pdf", [
+            "Content-Type" => "application/pdf"
+        ]);
+    }
+
+    public function jumlahSuratBulan()
+    {
+        $data = DB::table('surat')
+            ->select(DB::raw('MONTH(surat.created_at) as bulan'), DB::raw('COUNT(*) as jumlah_data'))
+            ->rightJoin("months", DB::raw("MONTH(surat.created_at)"), "=", "months.month_number")
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->get();
+
+        return Response::success(["jumlah_data" => $data]);
     }
 }

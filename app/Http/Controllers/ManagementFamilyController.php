@@ -90,7 +90,7 @@ class ManagementFamilyController extends Controller
             "agama"             => Rule::in(["Islam", "Kristen Protestan", "Katolik", "Hindu", "Buddha", "Kong Hu Cu"]),
             "status_perkawinan" => Rule::in(["Menikah", "Belum Menikah", "Cerai Hidup", "Cerai Mati"]),
             "alamat"            => "required|string",
-            "rt"                => Rule::in(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]),
+            "rt"                => Rule::in(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]),
             "rw"                => Rule::in(["1", "2", "3"]),
             "kelurahan"         => "string|max:255",
             "kecamatan"         => "string|max:255",
