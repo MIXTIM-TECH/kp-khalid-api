@@ -169,7 +169,8 @@ class LetterController extends Controller
 
         $file = storage_path("app/{$request->file_name}");
         $headers = [
-            "Content-Type" => "application/pdf"
+            "Content-Type" => "application/pdf",
+            "Access-Control-Allow-Origin" => "*"
         ];
 
         return response()->download($file, "surat.pdf", $headers);
