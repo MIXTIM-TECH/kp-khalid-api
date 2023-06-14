@@ -168,10 +168,11 @@ class LetterController extends Controller
         if ($validator->fails()) return Response::errors($validator);
 
         $file = storage_path("app/{$request->file_name}");
-
-        return response()->download($file, "surat.pdf", [
+        $headers = [
             "Content-Type" => "application/pdf"
-        ]);
+        ];
+
+        return response()->download($file, "surat.pdf", $headers);
     }
 
     public function jumlahSuratBulan()
