@@ -103,3 +103,7 @@ Route::controller(CredentialController::class)->group(function () {
     Route::post("/forget-password", "codeOtp");
     Route::post("/reset", "resetPassword");
 });
+
+Route::get("/coba", [
+    LetterController::class, "jumlahSuratBulan"
+]);
