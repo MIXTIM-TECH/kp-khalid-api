@@ -24,7 +24,8 @@ class KKController extends Controller
 
     public function fotoKK(KK $kk)
     {
-        return Storage::disk("local")->get($kk->foto_kk);
+        $base64File = base64_encode(Storage::disk("local")->get($kk->foto_kk));
+        return Response::success(["data" => $base64File]);
     }
 
     public function destroy(KK $kk)
