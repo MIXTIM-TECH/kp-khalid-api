@@ -7,6 +7,7 @@ use App\Http\Controllers\InfoSuratController;
 use App\Http\Controllers\KKController;
 use App\Http\Controllers\LetterController;
 use App\Http\Controllers\ManagementFamilyController;
+use App\Http\Controllers\MessageController;
 use App\Http\Middleware\Admin;
 use App\Http\Middleware\Auth;
 use App\Http\Middleware\Patriach;
@@ -107,3 +108,7 @@ Route::controller(CredentialController::class)->group(function () {
 Route::get("/coba", [
     LetterController::class, "jumlahSuratBulan"
 ]);
+
+Route::controller(MessageController::class)->group(function () {
+    Route::post("message", "store");
+});
