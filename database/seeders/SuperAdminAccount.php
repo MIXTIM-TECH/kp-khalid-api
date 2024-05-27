@@ -15,8 +15,8 @@ class SuperAdminAccount extends Seeder
     public function run()
     {
         DB::table("credentials")->insert([
-            "username"  => "polandu-jk",
-            "password"  => password_hash("[.';asdpolandu-jk", PASSWORD_DEFAULT),
+            "username"  => "SIPP-SJ",
+            "password"  => password_hash("sippsuper2024", PASSWORD_DEFAULT),
             "role"      => "super_admin",
             "status"    => true
         ]);
