@@ -24,4 +24,9 @@ class KK extends Model
     {
         return $this->hasOne(AnggotaKeluarga::class, "nik", "nik_kepala_keluarga")->join("penduduk", "penduduk.no_kk", "=", "anggota_keluarga.no_kk");
     }
+
+    public function credential()
+    {
+        return $this->belongsTo(Credential::class, "nik_kepala_keluarga", "username");
+    }
 }

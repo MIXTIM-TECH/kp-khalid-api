@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
+use Exception;
 
 class CredentialController extends Controller
 {
@@ -29,10 +30,16 @@ class CredentialController extends Controller
         return Response::message("Aktivasi Berhasil", 200);
     }
 
-    public function reject(Credential $userCredential)
+    public function reject(Request $request, Credential $userCredential)
     {
+        $userCredential = Credential::with("penduduk")->find($userCredential->username);
         $userCredential->status = "ditolak";
         $userCredential->save();
+        try {
+            $this->sendWhatsapp($userCredential->penduduk->no_whatsapp, $request->message);
+        } catch (Exception $e) {
+            // 
+        }
         return Response::message("Pendaftar Ditolak", 200);
     }
 
@@ -142,13 +149,38 @@ class CredentialController extends Controller
 
     private function sendWhatsapp(string $target, string $message)
     {
-        Http::withHeaders([
-            "Content-Type"      => "application/json",
-            "Authorization"     => "c5Gnmd-KuKaytpjrHy9h"
-        ])->post("https://api.fonnte.com/send", [
-            "target"    => $target,
-            "message"   => $message
-        ]);
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://api.fonnte.com/send',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => array(
+        'target' => $target,
+        'message' => $message, 
+        'countryCode' => '62', //optional
+        ),
+        CURLOPT_HTTPHEADER => array(
+            'Authorization: gK#hEfQNSdeu_ehK6hpJ' //change TOKEN to your actual token
+        ),
+        ));
+
+        $response = curl_exec($curl);
+        if (curl_errno($curl)) {
+            $error_msg = curl_error($curl);
+        }
+        curl_close($curl);
+
+        if (isset($error_msg)) {
+            throw new Exception($error_msg);
+        }
+        
+        return $response;
     }
 
     public function codeOtp(Request $request)

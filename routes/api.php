@@ -112,4 +112,5 @@ Route::get("/coba", [
 Route::controller(MessageController::class)->group(function () {
     Route::get("message", "index");
     Route::post("message", "store");
+    Route::delete("message/{message}", "destroy");
 });

@@ -14,4 +14,9 @@ class Penduduk extends Authenticatable
     protected $primaryKey = "nik_anggota_keluarga";
     protected $keyType = "string";
     public $incrementing = false;
+
+    public function kk()
+    {
+        return $this->belongsTo(KK::class, "no_kk", "no_kk");
+    }
 }

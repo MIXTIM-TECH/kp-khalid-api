@@ -12,7 +12,9 @@ class KKController extends Controller
 {
     public function index(Request $request)
     {
-        $dataKK = KK::with("kepalaKeluarga");
+        $dataKK = KK::with("kepalaKeluarga")->whereHas("credential", function ($query) {
+            $query->where("status", "aktif");
+        });
         $dataKK = (new Filters($dataKK, $request))->search("kk.no_kk")->beforeDate()->afterDate()->result();
         return Response::success($dataKK->get()->toArray());
     }

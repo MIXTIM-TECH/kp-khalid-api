@@ -167,13 +167,11 @@ class LetterController extends Controller
         ]);
         if ($validator->fails()) return Response::errors($validator);
 
-        $file = storage_path("app/{$request->file_name}");
-        $headers = [
-            "Content-Type" => "application/pdf",
-            "Access-Control-Allow-Origin" => "*"
-        ];
-
-        return response()->download($file, "surat.pdf", $headers);
+        $name = explode("/", $request->file_name);
+        $name = end($name);
+        
+        $pathToFile = storage_path("app/{$request->file_name}");
+        return response()->download($pathToFile);
     }
 
     public function jumlahSuratBulan()
